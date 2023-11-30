@@ -1,0 +1,19 @@
+{
+    "name": "LovelyBytes.CommonTools.FiniteStateMachine.Editor",
+    "rootNamespace": "LovelyBytes.CommonTools.FiniteStateMachine",
+    "references": [
+        "GUID:d399c3ed00dfe40418f03779992ec14d",
+        "GUID:68ff6d25eef84884896f6357eed7e21a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

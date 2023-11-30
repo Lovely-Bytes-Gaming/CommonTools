@@ -1,0 +1,17 @@
+{
+    "name": "LovelyBytes.CommonTools.FiniteStateMachine.Runtime",
+    "rootNamespace": "LovelyBytes.CommonTools.FiniteStateMachine",
+    "references": [
+        "GUID:68ff6d25eef84884896f6357eed7e21a",
+        "GUID:23eed6c2401dca1419d1ebd180e58c5a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

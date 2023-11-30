@@ -1,0 +1,19 @@
+GridBackground {
+    --grid-background-color: rgb(40, 40, 40);
+    --line-color: rgba(193, 196, 192, 0.1);
+    --thick-line-color: rgba(193, 196, 192, 0.1);
+    --spacing: 15;
+}
+
+.custom-label {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: rgb(0, 0, 0);
+}
+
+.fsm-label {
+    background-color: rgb(37, 37, 37);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    height: 25px;
+    color: rgb(255, 255, 255);
+}

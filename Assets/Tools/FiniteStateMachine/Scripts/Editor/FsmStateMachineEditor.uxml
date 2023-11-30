@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/!App/Utils/FiniteStateMachine/Scripts/Editor/FsmStateMachineEditor.uss?fileID=7433441132597879392&amp;guid=bbfc4b61c85b495458a278e41318754b&amp;type=3#FsmStateMachineEditor" />
+    <LovelyBytes.CommonTools.FiniteStateMachine.SplitView fixed-pane-initial-dimension="300" style="background-color: rgb(60, 60, 60);">
+        <ui:VisualElement name="left-panel" style="flex-grow: 1; width: -50px;">
+            <ui:Label tabindex="-1" text="Inspector" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Label" class="fsm-label" />
+            <LovelyBytes.CommonTools.FiniteStateMachine.InspectorView style="margin-top: 4px; margin-right: 4px; margin-bottom: 2px; margin-left: 2px; padding-top: 4px; padding-right: 2px; padding-bottom: 4px; padding-left: 1px;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="right-panel" style="flex-grow: 1;">
+            <ui:Label tabindex="-1" text="Graph View" parse-escape-sequences="true" display-tooltip-when-elided="true" class="fsm-label" />
+            <LovelyBytes.CommonTools.FiniteStateMachine.FsmStateMachineView focusable="true" style="background-color: rgba(0, 0, 0, 0); flex-grow: 1;" />
+        </ui:VisualElement>
+    </LovelyBytes.CommonTools.FiniteStateMachine.SplitView>
+</ui:UXML>

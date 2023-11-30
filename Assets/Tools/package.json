@@ -1,0 +1,18 @@
+{
+  "name": "com.lovelybytes.common-tools",
+  "author": "Lovely Bytes Gaming",
+  "version": "0.0.1",
+  "displayName": "Common Tools",
+  "description": "Collection of Unity Development tools shared across projects",
+  "unity": "2022.3",
+  "keywords": [
+    "common-tools"
+  ],
+  "license": "MIT",
+  "dependencies": {
+  },
+  "gitDependencies": {
+    "com.lovelybytes.asset-variables": "https://github.com/Lovely-Bytes-Gaming/asset-variables.git?path=Assets/AssetVariables#v0.10.16",
+    "net.tnrd.serializableinterface": "https://github.com/Lovely-Bytes-Gaming/Unity3D-SerializableInterface.git#v1.12.1"
+  }
+}
