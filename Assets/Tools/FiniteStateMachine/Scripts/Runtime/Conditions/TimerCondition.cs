@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -6,7 +7,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     public class TimerCondition : TransitionCondition
     {
         [SerializeField] 
-        private float _duration = 1f;
+        public float Duration = 1f;
         
         private float _time;
 
@@ -18,7 +19,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public override bool QueryCondition(float deltaTime)
         {
             _time += deltaTime;
-            return _time > _duration;
+            return _time > Duration;
         }
 
         public void ResetTimer()
