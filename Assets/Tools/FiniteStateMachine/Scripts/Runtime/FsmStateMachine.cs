@@ -78,10 +78,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private void ResetStates()
         {
             foreach (FsmState state in _states)
-            {
-                if (state.IsActive)
-                    state.Exit();
-            }
+                state.Exit();
         }
     }
 }
