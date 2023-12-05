@@ -2,6 +2,7 @@ using System;
 using LovelyBytes.AssetVariables;
 using TNRD;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -11,8 +12,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         [SerializeField]
         private SerializableInterface<IReadOnlyView<TValue>> _value;
 
-        [SerializeField] 
-        private TValue _referenceValue;
+        [FormerlySerializedAs("_referenceValue")] 
+        public TValue ReferenceValue;
 
         [SerializeField] 
         private ComparisonType _comparisonType;
@@ -24,7 +25,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         private bool Compare(TValue value)
         {
-            int cmp = value.CompareTo(_referenceValue);
+            int cmp = value.CompareTo(ReferenceValue);
             
             return _comparisonType switch
             {
