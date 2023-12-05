@@ -11,16 +11,19 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public Port Input, Output;
         public readonly FsmState State;
         public readonly FsmState.ViewData ViewData;
+        
         private readonly Action<FsmState, FsmState.ViewData> _viewFactory;
+        private FsmStateMachine _stateMachine;
         
         public FsmStateView(FsmState state, FsmState.ViewData viewData, 
-            Action<FsmState, FsmState.ViewData> viewFactory)
+            Action<FsmState, FsmState.ViewData> viewFactory, FsmStateMachine stateMachine)
         {
             State = state;
             title = state.name;
             ViewData = viewData;
             viewDataKey = viewData.Guid;
             _viewFactory = viewFactory;
+            _stateMachine = stateMachine;
             
             style.left = viewData.CanvasPosition.x;
             style.top = viewData.CanvasPosition.y;
@@ -70,7 +73,31 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            evt.menu.AppendAction("Clone Node", _ => CloneView());
+            evt.menu.AppendAction("State/Clone Node", _ => CloneView());
+            AppendBehaviourActions(evt);
+            evt.menu.AppendAction("State/Enter", _ => _stateMachine.ShortcutTo(State));
+        }
+        
+        private void AppendBehaviourActions(ContextualMenuPopulateEvent evt)
+        {
+            TypeCache.TypeCollection types = TypeCache.GetTypesDerivedFrom<FsmBehaviour>();
+            
+            foreach(Type type in types)
+                AppendCreateBehaviourAction(evt, type);
+        }
+        
+        private void AppendCreateBehaviourAction(ContextualMenuPopulateEvent evt, Type type)
+        {
+            if (type.IsGenericType)
+                return;
+            
+            evt.menu.AppendAction($"State/Add Behaviour/{type.Name}", _ =>
+            {
+                if (!State || !_stateMachine)
+                    return;
+                
+                FsmFactory.CreateBehaviour(_stateMachine, State, type);
+            });
         }
         
         private void CloneView()

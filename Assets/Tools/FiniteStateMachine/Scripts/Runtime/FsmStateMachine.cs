@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
@@ -48,7 +49,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public void OnUpdate(float deltaTime)
         {
             if (_current.OnUpdate(deltaTime, out Transition transition))
-                FireTransition(transition);
+                SetState(transition.TargetState);
         }
 
         public void AddState(FsmState state)
@@ -67,14 +68,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             _states.Remove(state);
         }
+
+        internal void ShortcutTo(FsmState state)
+        {
+            if (States.Contains(state) && _current != state)
+                SetState(state);
+        }
         
-        private void FireTransition(Transition transition) 
+        private void SetState(FsmState state) 
         {
             _current.Exit();
-            _current = transition.TargetState;
+            _current = state;
             _current.Enter();
         }
-
+        
         private void ResetStates()
         {
             foreach (FsmState state in _states)

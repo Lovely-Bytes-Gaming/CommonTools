@@ -13,6 +13,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public static Object CurrentSelection { get; private set; }
         
+        [MenuItem("Window/LovelyBytes/State Machine Editor")]
         public static void ShowWindow()
         {
             FsmStateMachineEditorWindow wnd = GetWindow<FsmStateMachineEditorWindow>();
@@ -71,8 +72,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             foreach (Node node in nodes)
             {
-                if (node is FsmStateView view && view.State.name != view.title)
-                    view.title = view.State.name;
+                if (node is FsmStateView view)
+                    UpdateStateView(view);
             }
             
             Object lastSelected = CurrentSelection;
@@ -82,6 +83,18 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 _inspectorView.UpdateSelection(CurrentSelection);
         }
 
+        private static void UpdateStateView(FsmStateView view)
+        {
+            FsmState state = view.State;
+            
+            if (state.name != view.title)
+                view.title = state.name;
+
+            view.style.backgroundColor = state.IsActive
+                ? Color.green
+                : new Color();
+        }
+        
         private void UpdateSelection(in UQueryState<Node> nodes, in UQueryState<Edge> edges)
         {
             foreach (Node node in nodes)

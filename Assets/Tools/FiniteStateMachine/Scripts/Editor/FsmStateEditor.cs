@@ -25,15 +25,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             ShowSubFsmMenu();
             EditorGUILayout.Space(10f);
             base.OnInspectorGUI();
-
-            if (!Application.isPlaying || target is not FsmState state)
-                return;
-            
-            if(!state.IsActive && GUILayout.Button("Enter"))
-                state.Enter();
-            
-            if(state.IsActive && GUILayout.Button("Exit"))
-                state.Exit();
         }
 
         private void ShowSubFsmMenu()

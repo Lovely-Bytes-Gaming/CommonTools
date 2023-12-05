@@ -76,30 +76,31 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            if (!_stateMachine)
+            if (!FsmStateMachineEditorWindow.CurrentSelection)
             {
-                FsmStateMachine[] instances = EditorUtils.FindAssetsOfType<FsmStateMachine>();
-                
-                foreach(FsmStateMachine fsm in instances)
-                    evt.menu.AppendAction($"Select {fsm.name}", _ => Selection.activeObject = fsm);
-
-                return;
+                AppendSelectStateMachineAction(evt);
+                AppendCreateStateAction(evt);
             }
             
-            AppendCreateViewAction(evt);
             
             switch (FsmStateMachineEditorWindow.CurrentSelection)
             {
                 case Transition transition:
                     AppendEdgeActions(evt, transition);
                     break;
-                case FsmState state:
-                    AppendBehaviourActions(evt, state);
-                    break;
             }
         }
+
+        private static void AppendSelectStateMachineAction(ContextualMenuPopulateEvent evt)
+        {
+            FsmStateMachine[] instances = EditorUtils.FindAssetsOfType<FsmStateMachine>();
+                
+            foreach(FsmStateMachine fsm in instances)
+                evt.menu.AppendAction($"Select State Machine/{fsm.name}", 
+                    _ => Selection.activeObject = fsm);
+        }
         
-        private void AppendCreateViewAction(ContextualMenuPopulateEvent evt)
+        private void AppendCreateStateAction(ContextualMenuPopulateEvent evt)
         {
             evt.menu.AppendAction($"Create New State",
                 _ => CreateState());
@@ -113,14 +114,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 AppendCreateConditionAction(evt, transition, type);
         }
 
-        private void AppendBehaviourActions(ContextualMenuPopulateEvent evt, FsmState state)
-        {
-            TypeCache.TypeCollection types = TypeCache.GetTypesDerivedFrom<FsmBehaviour>();
-            
-            foreach(Type type in types)
-                AppendCreateBehaviourAction(evt, state, type);
-        }
-
         private void AppendCreateConditionAction(ContextualMenuPopulateEvent evt, Transition transition, Type type)
         {
             if (type.IsGenericType)
@@ -132,20 +125,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     return;
                 
                 FsmFactory.CreateCondition(_stateMachine, transition, type);
-            });
-        }
-
-        private void AppendCreateBehaviourAction(ContextualMenuPopulateEvent evt, FsmState state, Type type)
-        {
-            if (type.IsGenericType)
-                return;
-            
-            evt.menu.AppendAction($"Add Behaviour/{type.Name}", _ =>
-            {
-                if (!state || !_stateMachine)
-                    return;
-                
-                FsmFactory.CreateBehaviour(_stateMachine, state, type);
             });
         }
         
@@ -180,7 +159,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             EditorUtility.SetDirty(state);
             AssetDatabase.SaveAssets();
             
-            FsmStateView stateView = new(state, viewData, CreateView);
+            FsmStateView stateView = new(state, viewData, CreateView, _stateMachine);
             AddElement(stateView);
         }
 
