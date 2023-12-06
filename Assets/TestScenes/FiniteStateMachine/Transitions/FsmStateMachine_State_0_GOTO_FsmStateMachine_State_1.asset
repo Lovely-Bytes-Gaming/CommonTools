@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4160a355f9253a4429cbbefd276cb193, type: 3}
+  m_Name: FsmStateMachine_State_0_GOTO_FsmStateMachine_State_1
+  m_EditorClassIdentifier: 
+  GuidFrom: bbfeae61016278545928465453d60a6a
+  GuidTo: 8fadbb05d39a503428b56600c85a2600
+  TargetState: {fileID: 11400000, guid: 50e183bd1943ae44da61fb17edf1e119, type: 2}
+  <Conditions>k__BackingField:
+  - {fileID: 11400000, guid: e7c1cfd0fc8982d4296d5817cc22f4c3, type: 2}
