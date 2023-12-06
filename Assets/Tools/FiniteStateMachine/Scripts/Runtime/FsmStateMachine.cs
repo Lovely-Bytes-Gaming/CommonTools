@@ -43,6 +43,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void Exit()
         {
+            Debug.LogError("Exit " + name);
             ResetStates();
         }
         
@@ -71,7 +72,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void JumpTo(FsmState state)
         {
-            if (States.Contains(state) && _current != state)
+            if (States.Contains(state) && (_current != state || !_current.IsActive))
                 SetState(state);
         }
         
