@@ -75,7 +75,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             evt.menu.AppendAction("State/Clone Node", _ => CloneView());
             AppendBehaviourActions(evt);
-            evt.menu.AppendAction("State/Enter", _ => _stateMachine.ShortcutTo(State));
+            evt.menu.AppendAction("State/Enter", _ => _stateMachine.JumpTo(State));
         }
         
         private void AppendBehaviourActions(ContextualMenuPopulateEvent evt)

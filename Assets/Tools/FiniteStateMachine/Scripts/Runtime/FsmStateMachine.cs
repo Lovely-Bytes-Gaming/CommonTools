@@ -69,7 +69,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _states.Remove(state);
         }
 
-        internal void ShortcutTo(FsmState state)
+        public void JumpTo(FsmState state)
         {
             if (States.Contains(state) && _current != state)
                 SetState(state);
