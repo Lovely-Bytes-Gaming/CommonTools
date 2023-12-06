@@ -77,7 +77,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void SetState(FsmState state) 
         {
-            _current.Exit();
+            if(_current)
+                _current.Exit();
+            
             _current = state;
             _current.Enter();
         }
