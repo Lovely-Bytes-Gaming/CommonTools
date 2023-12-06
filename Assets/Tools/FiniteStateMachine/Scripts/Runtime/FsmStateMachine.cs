@@ -43,7 +43,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void Exit()
         {
-            Debug.LogError("Exit " + name);
             ResetStates();
         }
         
