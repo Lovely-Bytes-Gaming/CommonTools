@@ -83,7 +83,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     AppendCreateStateAction(evt);
             }
             
-            
             switch (FsmStateMachineEditorWindow.CurrentSelection)
             {
                 case Transition transition:
@@ -92,10 +91,32 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
         }
 
-        private static void AppendSelectStateMachineAction(ContextualMenuPopulateEvent evt)
+        private void AppendSelectStateMachineAction(ContextualMenuPopulateEvent evt)
         {
             FsmStateMachine[] instances = EditorUtils.FindAssetsOfType<FsmStateMachine>();
+            
+            if (instances.Length == 0)
+                return;
+
+            FsmStateMachine parentFsm = null;
+
+            foreach (FsmStateMachine stateMachine in instances)
+            {
+                if (stateMachine.States.FirstOrDefault(s => s.SubStateMachine == _stateMachine) is not
+                    { } state) continue;
                 
+                parentFsm = stateMachine;
+                break;
+            }
+
+            if (parentFsm)
+            {
+                evt.menu.AppendAction("Select Parent State Machine",
+                    _ => Selection.activeObject = parentFsm);
+                
+                evt.menu.AppendSeparator();
+            }
+            
             foreach(FsmStateMachine fsm in instances)
                 evt.menu.AppendAction($"Select State Machine/{fsm.name}", 
                     _ => Selection.activeObject = fsm);

@@ -44,6 +44,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public void Exit()
         {
             ResetStates();
+            _current = null;
         }
         
         public void OnUpdate(float deltaTime)

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -110,6 +111,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             State.Views.Add(viewData);
             
             _viewFactory?.Invoke(State, viewData);
+        }
+        
+        private void CreateRunner()
+        {
+            FsmRunner runner = new GameObject($"{_stateMachine.name}_Runner").AddComponent<FsmRunner>();
+            FieldInfo fsmField = typeof(FsmRunner).GetField("_stateMachine",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            fsmField?.SetValue(runner, _stateMachine);
         }
     }
 }

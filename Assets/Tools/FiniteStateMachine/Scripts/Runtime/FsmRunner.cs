@@ -5,7 +5,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     [AddComponentMenu("LovelyBytes/CommonTools/FiniteStateMachine/FsmRunner")]
     public class FsmRunner : MonoBehaviour
     {
-        [SerializeField] private FsmStateMachine _stateMachine;
+        [SerializeField] 
+        private FsmStateMachine _stateMachine;
 
         private void OnEnable()
         {
