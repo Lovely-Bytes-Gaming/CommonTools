@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine 
 {
@@ -98,16 +99,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (instances.Length == 0)
                 return;
 
-            FsmStateMachine parentFsm = null;
-
-            foreach (FsmStateMachine stateMachine in instances)
-            {
-                if (stateMachine.States.FirstOrDefault(s => s.SubStateMachine == _stateMachine) is not
-                    { } state) continue;
-                
-                parentFsm = stateMachine;
-                break;
-            }
+            FsmStateMachine parentFsm = GetParentStateMachine(_stateMachine, instances);
 
             if (parentFsm)
             {
@@ -240,6 +232,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 if(EditorUtility.IsDirty(transition) || EditorUtility.IsDirty(state))
                     AssetDatabase.SaveAssets();
             }
+        }
+
+        private FsmStateMachine GetParentStateMachine(FsmStateMachine stateMachine,
+            IEnumerable<FsmStateMachine> availableStateMachines)
+        {
+            return availableStateMachines.Any(fsm => 
+                stateMachine.States.Any(state => 
+                    state.SubStateMachine == _stateMachine)) 
+                ? stateMachine : null;
+        }
+
+        private FsmState GetParentState(FsmStateMachine parentFsm, Object childFsm)
+        {
+            return parentFsm.States.FirstOrDefault(state => state.SubStateMachine == childFsm);
         }
     }
 }
