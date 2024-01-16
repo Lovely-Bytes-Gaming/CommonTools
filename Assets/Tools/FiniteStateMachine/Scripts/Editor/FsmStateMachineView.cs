@@ -234,13 +234,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
         }
 
-        private FsmStateMachine GetParentStateMachine(FsmStateMachine stateMachine,
+        private static FsmStateMachine GetParentStateMachine(FsmStateMachine stateMachine,
             IEnumerable<FsmStateMachine> availableStateMachines)
         {
-            return availableStateMachines.Any(fsm => 
-                stateMachine.States.Any(state => 
-                    state.SubStateMachine == _stateMachine)) 
-                ? stateMachine : null;
+            if (!stateMachine)
+                return null;
+
+            return availableStateMachines.FirstOrDefault(fsm =>
+                fsm.States.Any(state =>
+                    state.SubStateMachine == stateMachine));
         }
 
         private FsmState GetParentState(FsmStateMachine parentFsm, Object childFsm)

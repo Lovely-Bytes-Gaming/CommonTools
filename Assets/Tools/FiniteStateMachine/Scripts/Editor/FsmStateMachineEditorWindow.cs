@@ -91,8 +91,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 view.title = state.name;
 
             Color deselectedColor = state.SubStateMachine 
-                ? new Color(1f, 0.75f, 0f, 0.5f) 
+                ? new Color(1f, 0.0f, 0.75f, 0.5f) 
                 : new Color();
+
+            deselectedColor = view.StateMachine.InitialState == view.State
+                ? new Color(1f, 0.75f, 0f)
+                : deselectedColor;
             
             view.style.backgroundColor = state.IsActive
                 ? Color.green
