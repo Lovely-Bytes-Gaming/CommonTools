@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Reflection;
+using PlasticGui.Gluon.WorkspaceWindow.Views.IncomingChanges;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -13,7 +16,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public readonly FsmState State;
         public readonly FsmState.ViewData ViewData;
         public readonly FsmStateMachine StateMachine;
-                
         
         private readonly Action<FsmState, FsmState.ViewData> _viewFactory;
         
@@ -76,12 +78,25 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             evt.menu.AppendAction("State/Clone Node", _ => CloneView());
+            
             AppendBehaviourActions(evt);
             
+            if(Application.isPlaying)
+                AppendPlaymodeActions(evt);
+        }
+
+        private void AppendPlaymodeActions(ContextualMenuPopulateEvent evt)
+        {
             if (State.IsActive)
                 evt.menu.AppendAction("State/Exit", _ => StateMachine.Exit());
             else
-                evt.menu.AppendAction("State/Enter", _ => StateMachine.JumpTo(State));
+                evt.menu.AppendAction("State/Enter", _ => EnterState(State));
+        }
+
+        private void EnterState(FsmState state)
+        {
+            CreateRunnerIfNotAuthored();
+            StateMachine.JumpTo(state);
         }
         
         private void AppendBehaviourActions(ContextualMenuPopulateEvent evt)
@@ -113,14 +128,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             _viewFactory?.Invoke(State, viewData);
         }
-        
-        private void CreateRunner()
+
+        private void CreateRunnerIfNotAuthored()
         {
-            FsmRunner runner = new GameObject($"{StateMachine.name}_Runner").AddComponent<FsmRunner>();
-            FieldInfo fsmField = typeof(FsmRunner).GetField("_stateMachine",
-                BindingFlags.Instance | BindingFlags.NonPublic);
+            FsmRunner[] runners = Object.FindObjectsOfType<FsmRunner>();
             
-            fsmField?.SetValue(runner, StateMachine);
+            bool isAuthored = runners.Any(runner => runner.StateMachine == StateMachine);
+
+            if (isAuthored) 
+                return;
+            
+            FsmRunner runner = new GameObject($"{StateMachine.name}_Runner")
+                .AddComponent<FsmRunner>();
+
+            runner.StateMachine = StateMachine;
         }
     }
 }

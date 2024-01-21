@@ -49,7 +49,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         public void OnUpdate(float deltaTime)
         {
-            if (_current.OnUpdate(deltaTime, out Transition transition))
+            if (_current && _current.OnUpdate(deltaTime, out Transition transition))
                 SetState(transition.TargetState);
         }
 
