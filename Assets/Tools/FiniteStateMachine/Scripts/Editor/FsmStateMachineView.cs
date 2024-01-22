@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine 
 {
@@ -83,7 +84,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     AppendCreateStateAction(evt);
             }
             
-            
             switch (FsmStateMachineEditorWindow.CurrentSelection)
             {
                 case Transition transition:
@@ -92,10 +92,23 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
         }
 
-        private static void AppendSelectStateMachineAction(ContextualMenuPopulateEvent evt)
+        private void AppendSelectStateMachineAction(ContextualMenuPopulateEvent evt)
         {
             FsmStateMachine[] instances = EditorUtils.FindAssetsOfType<FsmStateMachine>();
+            
+            if (instances.Length == 0)
+                return;
+
+            FsmStateMachine parentFsm = GetParentStateMachine(_stateMachine, instances);
+
+            if (parentFsm)
+            {
+                evt.menu.AppendAction("Select Parent State Machine",
+                    _ => Selection.activeObject = parentFsm);
                 
+                evt.menu.AppendSeparator();
+            }
+            
             foreach(FsmStateMachine fsm in instances)
                 evt.menu.AppendAction($"Select State Machine/{fsm.name}", 
                     _ => Selection.activeObject = fsm);
@@ -219,6 +232,22 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 if(EditorUtility.IsDirty(transition) || EditorUtility.IsDirty(state))
                     AssetDatabase.SaveAssets();
             }
+        }
+
+        private static FsmStateMachine GetParentStateMachine(FsmStateMachine stateMachine,
+            IEnumerable<FsmStateMachine> availableStateMachines)
+        {
+            if (!stateMachine)
+                return null;
+
+            return availableStateMachines.FirstOrDefault(fsm =>
+                fsm.States.Any(state =>
+                    state.StateMachine == stateMachine));
+        }
+
+        private FsmState GetParentState(FsmStateMachine parentFsm, Object childFsm)
+        {
+            return parentFsm.States.FirstOrDefault(state => state.StateMachine == childFsm);
         }
     }
 }

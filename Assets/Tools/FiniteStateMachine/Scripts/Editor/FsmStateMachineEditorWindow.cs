@@ -90,9 +90,13 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (state.name != view.title)
                 view.title = state.name;
 
+            Color deselectedColor = state.StateMachine 
+                ? new Color(1f, 0.0f, 0.75f, 0.25f) 
+                : new Color();
+            
             view.style.backgroundColor = state.IsActive
                 ? Color.green
-                : new Color();
+                : deselectedColor;
         }
         
         private void UpdateSelection(in UQueryState<Node> nodes, in UQueryState<Edge> edges)

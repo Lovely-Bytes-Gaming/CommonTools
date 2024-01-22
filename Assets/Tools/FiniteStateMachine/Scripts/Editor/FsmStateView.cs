@@ -11,9 +11,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public Port Input, Output;
         public readonly FsmState State;
         public readonly FsmState.ViewData ViewData;
+        public readonly FsmStateMachine StateMachine;
         
         private readonly Action<FsmState, FsmState.ViewData> _viewFactory;
-        private FsmStateMachine _stateMachine;
         
         public FsmStateView(FsmState state, FsmState.ViewData viewData, 
             Action<FsmState, FsmState.ViewData> viewFactory, FsmStateMachine stateMachine)
@@ -23,7 +23,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             ViewData = viewData;
             viewDataKey = viewData.Guid;
             _viewFactory = viewFactory;
-            _stateMachine = stateMachine;
+            StateMachine = stateMachine;
             
             style.left = viewData.CanvasPosition.x;
             style.top = viewData.CanvasPosition.y;
@@ -74,12 +74,25 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             evt.menu.AppendAction("State/Clone Node", _ => CloneView());
+            
             AppendBehaviourActions(evt);
             
+            if(Application.isPlaying)
+                AppendPlaymodeActions(evt);
+        }
+
+        private void AppendPlaymodeActions(ContextualMenuPopulateEvent evt)
+        {
             if (State.IsActive)
-                evt.menu.AppendAction("State/Exit", _ => _stateMachine.Exit());
+                evt.menu.AppendAction("State/Exit", _ => StateMachine.Exit());
             else
-                evt.menu.AppendAction("State/Enter", _ => _stateMachine.JumpTo(State));
+                evt.menu.AppendAction("State/Enter", _ => EnterState(State));
+        }
+
+        private void EnterState(FsmState state)
+        {
+            CreateRunner();
+            StateMachine.JumpTo(state);
         }
         
         private void AppendBehaviourActions(ContextualMenuPopulateEvent evt)
@@ -97,10 +110,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             evt.menu.AppendAction($"State/Add Behaviour/{type.Name}", _ =>
             {
-                if (!State || !_stateMachine)
+                if (!State || !StateMachine)
                     return;
                 
-                FsmFactory.CreateBehaviour(_stateMachine, State, type);
+                FsmFactory.CreateBehaviour(StateMachine, State, type);
             });
         }
         
@@ -110,6 +123,17 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             State.Views.Add(viewData);
             
             _viewFactory?.Invoke(State, viewData);
+        }
+        
+        private void CreateRunner()
+        {
+            if (FsmGlobalContext.Instance.HasRunner(StateMachine)) 
+                return;
+            
+            FsmRunner runner = new GameObject($"{StateMachine.name}_Runner")
+                .AddComponent<FsmRunner>();
+
+            runner.StateMachine = StateMachine;
         }
     }
 }

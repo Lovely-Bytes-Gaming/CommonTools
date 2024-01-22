@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/FsmState")]
-    public partial class FsmState : ScriptableObject
+    public partial class FsmState : ScriptableObject, IFsmRunner
     {
         public bool IsActive { get; private set; }
         
@@ -14,10 +15,31 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public List<Transition> Transitions { get; private set; } = new();
 
         [field: SerializeField] 
-        public List<FsmBehaviour> Behaviours { get; private set; } = new(); 
+        public List<FsmBehaviour> Behaviours { get; private set; } = new();
+
+        public FsmStateMachine StateMachine
+        {
+            get => _subStateMachine;
+            set
+            {
+                FsmStateMachine oldFsm = _subStateMachine;
+
+                _subStateMachine = value;
+                FsmGlobalContext.Instance.RegisterRunner(this);
+
+                if (!IsActive) 
+                    return;
+                
+                if (oldFsm)
+                    oldFsm.Exit();
+                
+                if(_subStateMachine)
+                    _subStateMachine.Enter();
+            }
+        }
         
-        [SerializeField, HideInInspector]
-        public FsmStateMachine SubStateMachine;
+        [FormerlySerializedAs("SubStateMachine")] [SerializeField, HideInInspector]
+        private FsmStateMachine _subStateMachine;
 
         [SerializeField]
         private UnityEvent _onEnter;
@@ -59,17 +81,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             StartBehaviours();
             
             _onEnter?.Invoke();
-            
-            if (SubStateMachine)
-                SubStateMachine.Enter();
+
+            if (_subStateMachine)
+            {
+                FsmGlobalContext.Instance.RegisterRunner(this);
+                _subStateMachine.Enter();
+            }
         }
         
         internal void Exit()
         {
             StopBehaviours();
             
-            if (SubStateMachine)
-                SubStateMachine.Exit();
+            if (_subStateMachine)
+                _subStateMachine.Exit();
             
             IsActive = false;
             _onExit?.Invoke();
@@ -79,8 +104,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             UpdateBehaviours(deltaTime);
             
-            if (SubStateMachine)
-                SubStateMachine.OnUpdate(deltaTime);
+            if (_subStateMachine)
+                _subStateMachine.OnUpdate(deltaTime);
             
             return TryGetValidTransition(deltaTime, out firedTransition);
         }

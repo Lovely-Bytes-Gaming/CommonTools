@@ -142,7 +142,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             fsm.name = $"{parentState.name}FSM";
             EditorUtils.SaveAsset(fsm, parentState, fsm.name);
             
-            parentState.SubStateMachine = fsm;
+            parentState.StateMachine = fsm;
             EditorUtility.SetDirty(parentState);
             AssetDatabase.SaveAssets();
 

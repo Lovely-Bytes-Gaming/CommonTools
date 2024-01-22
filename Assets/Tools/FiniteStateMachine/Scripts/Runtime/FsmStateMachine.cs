@@ -14,10 +14,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             get => _initialState;
             set
             {
-                if (!_states.Contains(value))
-                    _states.Add(value);
-
-                _initialState = value;
+                if (_states.Contains(value))
+                    _initialState = value;
             }
         }
         
@@ -44,11 +42,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public void Exit()
         {
             ResetStates();
+            _current = null;
         }
         
         public void OnUpdate(float deltaTime)
         {
-            if (_current.OnUpdate(deltaTime, out Transition transition))
+            if (_current && _current.OnUpdate(deltaTime, out Transition transition))
                 SetState(transition.TargetState);
         }
 
