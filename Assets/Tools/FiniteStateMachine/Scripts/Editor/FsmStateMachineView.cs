@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
@@ -76,6 +77,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
+            
             if (!FsmStateMachineEditorWindow.CurrentSelection)
             {
                 AppendSelectStateMachineAction(evt);
@@ -84,7 +86,13 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     AppendCreateStateAction(evt);
             }
             
-            switch (FsmStateMachineEditorWindow.CurrentSelection)
+            Object currentSelection = FsmStateMachineEditorWindow.CurrentSelection;
+            IReadOnlyList<FsmStateView> selectedStates = FsmStateMachineEditorWindow.SelectedStates;
+            
+            if(selectedStates.Count > 1)
+                AppendMergeStatesAction(evt);
+            
+            switch (currentSelection)
             {
                 case Transition transition:
                     AppendEdgeActions(evt, transition);
@@ -140,6 +148,35 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 
                 FsmFactory.CreateCondition(_stateMachine, transition, type);
             });
+        }
+
+        private void AppendMergeStatesAction(ContextualMenuPopulateEvent evt)
+        {
+            evt.menu.AppendAction("Merge Selected States", _ =>
+            {
+                IReadOnlyList<FsmStateView> selectedViews = FsmStateMachineEditorWindow.SelectedStates;
+
+                if (selectedViews.Count < 2)
+                    return;
+                
+                // 1. find all incoming and outgoing transitions.
+                List<Transition> incoming = new();
+
+                foreach (FsmState state in _stateMachine.States)
+                {
+                    if (selectedViews.All(view => state != view.State))
+                    {
+                        foreach (Transition transition in state.Transitions)
+                        {
+                            
+                        }
+                    }
+                }
+                
+                
+                // 2. Create a new State.
+                // 3. Create a Sub state machine for new state.
+            });            
         }
         
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

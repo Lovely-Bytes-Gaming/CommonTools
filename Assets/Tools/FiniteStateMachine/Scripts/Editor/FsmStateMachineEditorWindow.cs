@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -6,12 +7,15 @@ using UnityEngine.UIElements;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
-    public class FsmStateMachineEditorWindow : EditorWindow
+    internal class FsmStateMachineEditorWindow : EditorWindow
     {
         private FsmStateMachineView _stateMachineView;
         private InspectorView _inspectorView;
 
         public static Object CurrentSelection { get; private set; }
+        public static IReadOnlyList<FsmStateView> SelectedStates => _selectedStates.AsReadOnly();
+        private static readonly List<FsmStateView> _selectedStates = new();
+        
         
         [MenuItem("Window/LovelyBytes/State Machine Editor")]
         public static void ShowWindow()
@@ -101,14 +105,18 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void UpdateSelection(in UQueryState<Node> nodes, in UQueryState<Edge> edges)
         {
+            _selectedStates.Clear();
+            
             foreach (Node node in nodes)
             {
                 if (node is not FsmStateView view || !view.IsSelected(_stateMachineView))
                     continue;
                 
-                CurrentSelection = view.State;
-                return;
+                _selectedStates.Add(view);
             }
+
+            if (_selectedStates.Count > 0)
+                CurrentSelection = _selectedStates[0].State;
             
             foreach (Edge edge in edges.Where(edge => edge.IsSelected(_stateMachineView)))
             {
