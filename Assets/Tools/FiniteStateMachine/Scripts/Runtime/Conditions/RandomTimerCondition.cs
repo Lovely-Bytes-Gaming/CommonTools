@@ -11,7 +11,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private float _currentDuration;
         private float _time;
 
-
         public override bool QueryCondition(float deltaTime)
         {
             _time += deltaTime;

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
@@ -159,23 +160,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 if (selectedViews.Count < 2)
                     return;
                 
-                // 1. find all incoming and outgoing transitions.
-                List<Transition> incoming = new();
-
-                foreach (FsmState state in _stateMachine.States)
-                {
-                    if (selectedViews.All(view => state != view.State))
-                    {
-                        foreach (Transition transition in state.Transitions)
-                        {
-                            
-                        }
-                    }
-                }
+                // Create a new State
+                FsmState parentState = FsmFactory.CreateState(_stateMachine);
+                // Create a Sub state machine for new state.
+                FsmStateMachine parentFsm = FsmFactory.CreateSubStateMachine(parentState);
                 
-                
-                // 2. Create a new State.
-                // 3. Create a Sub state machine for new state.
+                // Create a transition from each incoming state to the new parent state
             });            
         }
         
