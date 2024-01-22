@@ -1,14 +1,11 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/TimerCondition")]
     public class TimerCondition : TransitionCondition
     {
-        [SerializeField] 
         public float Duration = 1f;
-        
         private float _time;
 
         public override void ResetCondition()

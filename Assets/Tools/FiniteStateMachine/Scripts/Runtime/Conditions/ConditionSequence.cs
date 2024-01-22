@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Evaluates all its conditions up to the first condition that is not satisfied.
+    /// Returns true when all conditions are satisfied.
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/ConditionSequence")]
     public class ConditionSequence : TransitionCondition
     {
