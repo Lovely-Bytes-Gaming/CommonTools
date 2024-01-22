@@ -242,12 +242,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             return availableStateMachines.FirstOrDefault(fsm =>
                 fsm.States.Any(state =>
-                    state.SubStateMachine == stateMachine));
+                    state.StateMachine == stateMachine));
         }
 
         private FsmState GetParentState(FsmStateMachine parentFsm, Object childFsm)
         {
-            return parentFsm.States.FirstOrDefault(state => state.SubStateMachine == childFsm);
+            return parentFsm.States.FirstOrDefault(state => state.StateMachine == childFsm);
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [AddComponentMenu("LovelyBytes/CommonTools/FiniteStateMachine/FsmRunner")]
-    public class FsmRunner : MonoBehaviour
+    public class FsmRunner : MonoBehaviour, IFsmRunner
     {
         public FsmStateMachine StateMachine
         {
@@ -15,7 +15,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     _stateMachine.Exit();
 
                 _stateMachine = value;
-                _stateMachine.Enter();
+                Initialize();
             }
         }
         
@@ -24,19 +24,28 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void OnEnable()
         {
-            if(_stateMachine)
-                _stateMachine.Enter();
+            Initialize();
         }
 
         private void Update()
         {
-            _stateMachine.OnUpdate(Time.deltaTime);
+            if (_stateMachine)
+                _stateMachine.OnUpdate(Time.deltaTime);
         }
 
         private void OnDisable()
         {
             if(_stateMachine)
                 _stateMachine.Exit();
+        }
+
+        private void Initialize()
+        {
+            if (!StateMachine)
+                return;
+            
+            FsmGlobalContext.Instance.RegisterRunner(this);
+            _stateMachine.Enter();
         }
     }
 }

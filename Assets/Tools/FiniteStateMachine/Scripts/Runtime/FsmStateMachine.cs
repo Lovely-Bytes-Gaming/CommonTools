@@ -14,10 +14,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             get => _initialState;
             set
             {
-                if (!_states.Contains(value))
-                    _states.Add(value);
-
-                _initialState = value;
+                if (_states.Contains(value))
+                    _initialState = value;
             }
         }
         

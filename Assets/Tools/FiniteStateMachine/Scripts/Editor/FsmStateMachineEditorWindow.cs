@@ -90,7 +90,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (state.name != view.title)
                 view.title = state.name;
 
-            Color deselectedColor = state.SubStateMachine 
+            Color deselectedColor = state.StateMachine 
                 ? new Color(1f, 0.0f, 0.75f, 0.25f) 
                 : new Color();
             

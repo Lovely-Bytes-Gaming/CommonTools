@@ -32,10 +32,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (target is not FsmState state)
                 return;
 
-            state.SubStateMachine = EditorGUILayout.ObjectField("Sub State Machine", 
-                state.SubStateMachine, typeof(FsmStateMachine), false) as FsmStateMachine;
+            state.StateMachine = EditorGUILayout.ObjectField("Sub State Machine", 
+                state.StateMachine, typeof(FsmStateMachine), false) as FsmStateMachine;
 
-            if (!state.SubStateMachine && GUILayout.Button("Create Sub State Machine"))
+            if (!state.StateMachine && GUILayout.Button("Create Sub State Machine"))
                 FsmFactory.CreateSubStateMachine(state);
 
             serializedObject.ApplyModifiedProperties();

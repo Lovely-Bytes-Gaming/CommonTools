@@ -1,12 +1,8 @@
 using System;
-using System.Linq;
-using System.Reflection;
-using PlasticGui.Gluon.WorkspaceWindow.Views.IncomingChanges;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -95,7 +91,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         private void EnterState(FsmState state)
         {
-            CreateRunnerIfNotAuthored();
+            CreateRunner();
             StateMachine.JumpTo(state);
         }
         
@@ -128,14 +124,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             _viewFactory?.Invoke(State, viewData);
         }
-
-        private void CreateRunnerIfNotAuthored()
+        
+        private void CreateRunner()
         {
-            FsmRunner[] runners = Object.FindObjectsOfType<FsmRunner>();
-            
-            bool isAuthored = runners.Any(runner => runner.StateMachine == StateMachine);
-
-            if (isAuthored) 
+            if (FsmGlobalContext.Instance.HasRunner(StateMachine)) 
                 return;
             
             FsmRunner runner = new GameObject($"{StateMachine.name}_Runner")
