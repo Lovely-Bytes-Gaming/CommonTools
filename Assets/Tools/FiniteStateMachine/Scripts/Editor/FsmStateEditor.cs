@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,12 +22,33 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (GUILayout.Button("Apply Name"))
                 AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), _name);
             
-            EditorGUILayout.Space(10f);
+            EditorGUILayout.Space(20f);
+            SelectStateMachine();
+            EditorGUILayout.Space(20f);
             ShowSubFsmMenu();
             EditorGUILayout.Space(10f);
+            
             base.OnInspectorGUI();
         }
 
+        private void SelectStateMachine()
+        {
+            if (target is not FsmState state)
+                return;
+
+            if (!GUILayout.Button("Select State Machine"))
+                return;
+            
+            FsmStateMachine[] stateMachines = EditorUtils.FindAssetsOfType<FsmStateMachine>();
+            FsmStateMachine stateMachine = stateMachines?.FirstOrDefault(fsm => fsm.States.Contains(state));
+
+            if (!stateMachine)
+                return;
+            
+            FsmStateMachineEditorWindow.ShowWindow();
+            Selection.activeObject = stateMachine;
+        }
+        
         private void ShowSubFsmMenu()
         {
             if (target is not FsmState state)
