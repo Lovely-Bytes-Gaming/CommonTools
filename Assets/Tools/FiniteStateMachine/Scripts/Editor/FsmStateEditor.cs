@@ -21,21 +21,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             if (GUILayout.Button("Apply Name"))
                 AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), _name);
-            
-            EditorGUILayout.Space(20f);
-            SelectStateMachine();
-            EditorGUILayout.Space(20f);
-            ShowSubFsmMenu();
-            EditorGUILayout.Space(10f);
-            
+
+            if (target is FsmState state)
+            {
+                EditorGUILayout.Space(20f);
+                SelectStateMachine(state);
+                EditorGUILayout.Space(20f);
+                ShowSubFsmMenu(state);
+                EditorGUILayout.Space(10f);
+            }
             base.OnInspectorGUI();
         }
 
-        private void SelectStateMachine()
+        private static void SelectStateMachine(FsmState state)
         {
-            if (target is not FsmState state)
-                return;
-
             if (!GUILayout.Button("Select State Machine"))
                 return;
             
@@ -49,11 +48,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             Selection.activeObject = stateMachine;
         }
         
-        private void ShowSubFsmMenu()
+        private void ShowSubFsmMenu(FsmState state)
         {
-            if (target is not FsmState state)
-                return;
-
             state.StateMachine = EditorGUILayout.ObjectField("Sub State Machine", 
                 state.StateMachine, typeof(FsmStateMachine), false) as FsmStateMachine;
 
