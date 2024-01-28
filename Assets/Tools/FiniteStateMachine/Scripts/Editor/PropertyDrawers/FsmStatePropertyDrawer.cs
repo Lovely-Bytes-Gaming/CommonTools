@@ -18,9 +18,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             Rect assetPos = position;
             assetPos.width -= buttonWidth + padding;
 
-            Rect buildSettingsPos = position;
-            buildSettingsPos.x += position.width - buttonWidth + padding;
-            buildSettingsPos.width = buttonWidth;
+            Rect buttonPos = position;
+            buttonPos.x += position.width - buttonWidth + padding;
+            buttonPos.width = buttonWidth;
 
             EditorGUI.PropertyField(assetPos, property, new GUIContent());
 
@@ -33,7 +33,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 Color prevBackgroundColor = GUI.backgroundColor;
                 GUI.backgroundColor = state.IsActive ? Color.red : Color.green;
                 
-                if (GUI.Button(buildSettingsPos, settingsContent, EditorStyles.miniButtonRight) && property.objectReferenceValue)
+                if (GUI.Button(buttonPos, settingsContent, EditorStyles.miniButtonRight) && property.objectReferenceValue)
                 {
                     if (state.IsActive)
                         state.Exit();
