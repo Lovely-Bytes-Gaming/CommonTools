@@ -34,9 +34,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         public void Enter(IFsmRunner runner)
         {
-            if (_runner != null)
-                _runner.StateMachine = null;
-
+            _runner?.Release(this);
             _runner = runner;
             
             InitializeStatesForEditor();

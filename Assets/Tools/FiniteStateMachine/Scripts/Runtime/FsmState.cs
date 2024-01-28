@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -143,6 +142,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 return true;
             }
             return false;
+        }
+
+        public void Release(FsmStateMachine stateMachine)
+        {
+            if (_subStateMachine == stateMachine)
+                _subStateMachine = null;
         }
     }
 }

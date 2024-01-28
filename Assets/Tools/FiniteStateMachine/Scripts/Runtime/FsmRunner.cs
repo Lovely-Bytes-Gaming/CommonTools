@@ -46,5 +46,11 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             _stateMachine.Enter(runner: this);
         }
+
+        public void Release(FsmStateMachine stateMachine)
+        {
+            if (_stateMachine == stateMachine)
+                _stateMachine = null;
+        }
     }
 }
