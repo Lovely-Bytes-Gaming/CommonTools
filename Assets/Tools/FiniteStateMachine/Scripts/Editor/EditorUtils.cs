@@ -40,7 +40,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
 
             return assets;
-
+        }
+        
+        public static void ForceEnterState(FsmState state)
+        {
+            FsmStateDisablerEditorGuard.FsmStateDisabler.Instance.Monitor(state);
+            state.Enter();
         }
     }
 }

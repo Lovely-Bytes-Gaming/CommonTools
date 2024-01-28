@@ -127,7 +127,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void CreateRunner()
         {
-            if (FsmGlobalContext.Instance.HasRunner(StateMachine)) 
+            if (StateMachine.IsRunning)
                 return;
             
             FsmRunner runner = new GameObject($"{StateMachine.name}_Runner")

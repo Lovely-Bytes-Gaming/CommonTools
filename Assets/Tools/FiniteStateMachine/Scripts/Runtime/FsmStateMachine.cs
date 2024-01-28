@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
@@ -8,7 +7,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     public partial class FsmStateMachine : ScriptableObject
     {
         public IReadOnlyList<FsmState> States => _statesRO ??= _states.AsReadOnly();
-
+        public bool IsRunning => _runner != null;
+        
         public FsmState InitialState
         {
             get => _initialState;
@@ -27,11 +27,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private FsmState _initialState;
 
         private FsmState _current;
+        private IFsmRunner _runner;
 
         partial void InitializeStatesForEditor();
         
-        public void Enter()
+        public void Enter(IFsmRunner runner)
         {
+            _runner?.Release(this);
+            _runner = runner;
+            
             InitializeStatesForEditor();
             ResetStates();
             
@@ -43,6 +47,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             ResetStates();
             _current = null;
+            _runner = null;
         }
         
         public void OnUpdate(float deltaTime)
@@ -70,7 +75,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void JumpTo(FsmState state)
         {
-            if (States.Contains(state) && (_current != state || !_current.IsActive))
+            if (_states.Contains(state) && (_current != state || !_current.IsActive))
                 SetState(state);
         }
         

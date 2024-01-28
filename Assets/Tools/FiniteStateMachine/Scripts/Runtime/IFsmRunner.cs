@@ -1,8 +1,8 @@
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
-    public interface IFsmRunner 
+    public interface IFsmRunner
     {
-        public FsmStateMachine StateMachine { get; set; }
+        public void Release(FsmStateMachine stateMachine);
     }
 }
