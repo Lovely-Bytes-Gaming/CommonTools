@@ -17,20 +17,25 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void OnInspectorGUI()
         {
+            base.OnInspectorGUI();
+            
             _name = EditorGUILayout.TextField("Name", _name);
 
             if (GUILayout.Button("Apply Name"))
                 AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), _name);
 
-            if (target is FsmState state)
-            {
-                EditorGUILayout.Space(20f);
-                SelectStateMachine(state);
-                EditorGUILayout.Space(20f);
-                ShowSubFsmMenu(state);
-                EditorGUILayout.Space(10f);
-            }
-            base.OnInspectorGUI();
+            if (target is not FsmState state) 
+                return;
+            
+            EditorGUILayout.Space(20f);
+            SelectStateMachine(state);
+            
+            EditorGUILayout.Space(20f);
+            ShowSubFsmMenu(state);
+            
+            EditorGUILayout.Space(10f);
+            ShowEnterExitButton(state);
+            
         }
 
         private static void SelectStateMachine(FsmState state)
@@ -57,6 +62,31 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 FsmFactory.CreateSubStateMachine(state);
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void ShowEnterExitButton(FsmState state)
+        {
+            if (!Application.isPlaying)
+                return;
+
+            switch (state.IsActive)
+            {
+                case true when GUILayout.Button("Exit"):
+                    state.Exit();
+                    break;
+                case false when GUILayout.Button("Enter"):
+                    ForceEnterState(state);
+                    break;
+            }
+        }
+
+        private void ForceEnterState(FsmState state)
+        {
+            FsmStateDisablerEditorGuard.FsmStateDisabler stateDisabler = new GameObject($"[DEBUG] {state.name} Disabler")
+                .AddComponent<FsmStateDisablerEditorGuard.FsmStateDisabler>();
+
+            stateDisabler.State = state;
+            state.Enter();
         }
     }
 }
