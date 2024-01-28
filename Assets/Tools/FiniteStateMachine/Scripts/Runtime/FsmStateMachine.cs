@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
@@ -76,7 +75,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void JumpTo(FsmState state)
         {
-            if (States.Contains(state) && (_current != state || !_current.IsActive))
+            if (_states.Contains(state) && (_current != state || !_current.IsActive))
                 SetState(state);
         }
         
