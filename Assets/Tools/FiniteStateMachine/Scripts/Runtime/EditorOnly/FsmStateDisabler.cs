@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
@@ -14,18 +16,23 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         /// </summary>
         internal class FsmStateDisabler : MonoBehaviour
         {
-            public FsmState State
+            public static FsmStateDisabler Instance => _instance.Value;
+            
+            private static readonly Lazy<FsmStateDisabler> _instance = new(() =>
+                new GameObject("State Disabler").AddComponent<FsmStateDisabler>());
+            
+            public void Monitor(FsmState state)
             {
-                get => _state;
-                set
-                {
-                    _state = value;
-                    Debug.LogWarning($"Fsm State {_state.name} has been explicitly set active via its custom inspector. " +
-                                     $"It will automatically be exited when Play Mode is stopped. Use this feature for debugging only.");
-                }
+                if (_states.Contains(state))
+                    return;
+                    
+                Debug.LogWarning($"Fsm State {state.name} has been explicitly set active via its custom inspector. " +
+                                 $"It will automatically be exited when Play Mode is stopped. Use this feature for debugging only.");
+                
+                _states.Add(state);
             }
-
-            private FsmState _state;
+            
+            private List<FsmState> _states = new();
         
             private void Awake()
             {
@@ -34,7 +41,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             private void OnDestroy()
             {
-                State.Exit();
+                _states.ForEach(state => state.Exit());
             }
         }
     }

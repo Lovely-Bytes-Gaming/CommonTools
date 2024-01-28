@@ -44,10 +44,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         public static void ForceEnterState(FsmState state)
         {
-            FsmStateDisablerEditorGuard.FsmStateDisabler stateDisabler = new GameObject($"[DEBUG] {state.name} Disabler")
-                .AddComponent<FsmStateDisablerEditorGuard.FsmStateDisabler>();
-
-            stateDisabler.State = state;
+            FsmStateDisablerEditorGuard.FsmStateDisabler.Instance.Monitor(state);
             state.Enter();
         }
     }
