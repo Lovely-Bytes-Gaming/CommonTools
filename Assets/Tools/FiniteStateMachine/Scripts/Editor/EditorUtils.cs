@@ -40,7 +40,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
 
             return assets;
+        }
+        
+        public static void ForceEnterState(FsmState state)
+        {
+            FsmStateDisablerEditorGuard.FsmStateDisabler stateDisabler = new GameObject($"[DEBUG] {state.name} Disabler")
+                .AddComponent<FsmStateDisablerEditorGuard.FsmStateDisabler>();
 
+            stateDisabler.State = state;
+            state.Enter();
         }
     }
 }

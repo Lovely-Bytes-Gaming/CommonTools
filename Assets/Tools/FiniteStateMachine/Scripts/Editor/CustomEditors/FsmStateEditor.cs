@@ -75,18 +75,11 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     state.Exit();
                     break;
                 case false when GUILayout.Button("Enter"):
-                    ForceEnterState(state);
+                    EditorUtils.ForceEnterState(state);
                     break;
             }
         }
 
-        private void ForceEnterState(FsmState state)
-        {
-            FsmStateDisablerEditorGuard.FsmStateDisabler stateDisabler = new GameObject($"[DEBUG] {state.name} Disabler")
-                .AddComponent<FsmStateDisablerEditorGuard.FsmStateDisabler>();
 
-            stateDisabler.State = state;
-            state.Enter();
-        }
     }
 }
