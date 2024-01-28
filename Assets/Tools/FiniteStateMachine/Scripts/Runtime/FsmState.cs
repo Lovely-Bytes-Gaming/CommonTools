@@ -25,7 +25,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 FsmStateMachine oldFsm = _subStateMachine;
 
                 _subStateMachine = value;
-                FsmGlobalContext.Instance.RegisterRunner(this);
 
                 if (!IsActive) 
                     return;
@@ -34,7 +33,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     oldFsm.Exit();
                 
                 if(_subStateMachine)
-                    _subStateMachine.Enter();
+                    _subStateMachine.Enter(runner: this);
             }
         }
         
@@ -83,10 +82,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _onEnter?.Invoke();
 
             if (_subStateMachine)
-            {
-                FsmGlobalContext.Instance.RegisterRunner(this);
-                _subStateMachine.Enter();
-            }
+                _subStateMachine.Enter(runner: this);
         }
         
         internal void Exit()

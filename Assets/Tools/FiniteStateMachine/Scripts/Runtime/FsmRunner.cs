@@ -44,8 +44,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (!StateMachine)
                 return;
             
-            FsmGlobalContext.Instance.RegisterRunner(this);
-            _stateMachine.Enter();
+            _stateMachine.Enter(runner: this);
         }
     }
 }

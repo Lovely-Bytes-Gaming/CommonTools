@@ -8,7 +8,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     public partial class FsmStateMachine : ScriptableObject
     {
         public IReadOnlyList<FsmState> States => _statesRO ??= _states.AsReadOnly();
-
+        public bool IsRunning => _runner != null;
+        
         public FsmState InitialState
         {
             get => _initialState;
@@ -27,11 +28,17 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private FsmState _initialState;
 
         private FsmState _current;
+        private IFsmRunner _runner;
 
         partial void InitializeStatesForEditor();
         
-        public void Enter()
+        public void Enter(IFsmRunner runner)
         {
+            if (_runner != null)
+                _runner.StateMachine = null;
+
+            _runner = runner;
+            
             InitializeStatesForEditor();
             ResetStates();
             
@@ -43,6 +50,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             ResetStates();
             _current = null;
+            _runner = null;
         }
         
         public void OnUpdate(float deltaTime)
