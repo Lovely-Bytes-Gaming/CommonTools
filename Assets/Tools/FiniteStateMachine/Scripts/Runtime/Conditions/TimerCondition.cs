@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Waits for set time before evaluating to true.
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/TimerCondition")]
     public class TimerCondition : TransitionCondition
     {

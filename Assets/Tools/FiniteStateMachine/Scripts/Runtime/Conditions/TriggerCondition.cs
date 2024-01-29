@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Condition that can be referenced and fired from anywhere.
+    /// Returns whether the trigger has already been fired.
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/TriggerCondition")]
     public class TriggerCondition : TransitionCondition
     {

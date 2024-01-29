@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Waits for a random time between MinTime and MaxTime before evaluating to true. 
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/RandomTimerCondition")]
     public class RandomTimerCondition : TransitionCondition
     {
@@ -20,7 +23,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void ResetCondition()
         {
-            base.ResetCondition();
             _currentDuration = Random.Range(MinTime, MaxTime);
         }
     }
