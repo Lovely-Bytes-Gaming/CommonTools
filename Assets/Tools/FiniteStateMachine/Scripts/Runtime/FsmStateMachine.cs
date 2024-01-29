@@ -3,6 +3,12 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// <see cref="ScriptableObject"/> representation of a Finite State Machine:
+    /// https://en.wikipedia.org/wiki/Finite-state_machine
+    /// For editing, use the custom editor window at:
+    /// Window -> Lovely Bytes -> State Machine Editor
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/FsmStateMachine")]
     public partial class FsmStateMachine : ScriptableObject
     {

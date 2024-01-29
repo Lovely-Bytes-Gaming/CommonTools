@@ -5,6 +5,9 @@ using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Represents one of multiple states an <see cref="FsmStateMachine"/> can be in.
+    /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/FsmState")]
     public partial class FsmState : ScriptableObject, IFsmRunner
     {
@@ -16,7 +19,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         [field: SerializeField] 
         public List<FsmBehaviour> Behaviours { get; private set; } = new();
 
-        public FsmStateMachine StateMachine
+        public FsmStateMachine SubStateMachine
         {
             get => _subStateMachine;
             set
