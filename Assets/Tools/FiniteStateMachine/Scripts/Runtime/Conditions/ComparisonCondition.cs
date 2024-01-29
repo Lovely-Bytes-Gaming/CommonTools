@@ -6,6 +6,9 @@ using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
+    /// <summary>
+    /// Compares the value of the given object with its Reference Value.
+    /// </summary>
     public class ComparisonCondition<TValue> : TransitionCondition
         where TValue : IComparable<TValue>
     {

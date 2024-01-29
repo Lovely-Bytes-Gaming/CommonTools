@@ -79,7 +79,5 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     break;
             }
         }
-
-
     }
 }
