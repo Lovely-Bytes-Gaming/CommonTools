@@ -14,6 +14,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public bool QueryConditions(float deltaTime)
         {
+            if (Conditions.Count < 1)
+                return true;
+            
             foreach (TransitionCondition condition in Conditions)
             {
                 if (condition.QueryCondition(deltaTime))
