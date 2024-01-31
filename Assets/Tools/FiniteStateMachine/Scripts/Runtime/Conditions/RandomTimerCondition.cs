@@ -23,6 +23,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void ResetCondition()
         {
+            _time = 0f;
             _currentDuration = Random.Range(MinTime, MaxTime);
         }
     }
