@@ -22,7 +22,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _name = EditorGUILayout.TextField("Name", _name);
 
             if (GUILayout.Button("Apply Name"))
-                AssetDatabase.RenameAsset(AssetDatabase.GetAssetPath(target), _name);
+            {
+                target.name = _name;
+                EditorUtility.SetDirty(target);
+            }
 
             if (target is not FsmState state) 
                 return;

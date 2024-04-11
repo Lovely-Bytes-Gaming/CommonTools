@@ -113,7 +113,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 if (!State || !StateMachine)
                     return;
                 
-                FsmFactory.CreateBehaviour(StateMachine, State, type);
+                FsmFactory.CreateBehaviour(State, type);
             });
         }
         

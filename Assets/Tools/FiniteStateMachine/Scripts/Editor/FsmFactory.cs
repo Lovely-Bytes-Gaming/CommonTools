@@ -1,7 +1,9 @@
 
 using System;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -12,26 +14,24 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private const string _conditionDir = "Conditions";
         private const string _behaviourDir = "Behaviour";
         
-        public static FsmState CreateState(FsmStateMachine parentFsm)
+        public static FsmState CreateState(FsmStateMachine parentFsm, string name = null)
         {
             FsmState state = ScriptableObject.CreateInstance<FsmState>();
 
             if (!state)
                 return null;
-            
-            state.name = $"{parentFsm.name}_State_{parentFsm.States.Count}";
+
+            state.name = string.IsNullOrEmpty(name)
+                ? $"{parentFsm.name}_State_{parentFsm.States.Count}"
+                : name;
 
             state.Views.Add(new FsmState.ViewData
             {
                 Guid = GUID.Generate().ToString(),
                 CanvasPosition = Vector2.zero
             });
-
-            EditorUtils.SaveAsset(state, parentFsm, _stateDir);
             parentFsm.AddState(state);
-            
-            EditorUtility.SetDirty(state);
-            EditorUtility.SetDirty(parentFsm);
+            AssetDatabase.AddObjectToAsset(state, parentFsm);
             AssetDatabase.SaveAssets();
 
             return state;
@@ -44,14 +44,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (state.Views.Count < 1)
             {
                 parentFsm.RemoveState(state);
-                AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(state));
-                EditorUtility.SetDirty(parentFsm);
+                AssetDatabase.RemoveObjectFromAsset(state);
             }
-            else
-            {
-                EditorUtility.SetDirty(state);
-            }
-            
             AssetDatabase.SaveAssets();
         }
         
@@ -65,14 +59,14 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             Transition transition = ScriptableObject.CreateInstance<Transition>();
 
-            transition.name = $"{from.State.name}_GOTO_{to.State.name}";
+            transition.name = $"{from.State.name}: Transition";
             transition.TargetState = to.State;
             transition.GuidFrom = from.ViewData.Guid;
             transition.GuidTo = to.ViewData.Guid;
-            EditorUtils.SaveAsset(transition, parentFsm, _transitionDir);
             
             from.State.Transitions.Add(transition);
-            EditorUtility.SetDirty(from.State);
+            AssetDatabase.AddObjectToAsset(transition, from.State);
+            
             AssetDatabase.SaveAssets();
             
             return transition;
@@ -95,9 +89,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 return;
             
             from.Transitions.Remove(transition);
-            AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(transition));
-            
-            EditorUtility.SetDirty(from);
+            AssetDatabase.RemoveObjectFromAsset(transition);
             AssetDatabase.SaveAssets();
         }
         
@@ -109,37 +101,48 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (!condition)
                 return null;
             
-            condition.name = $"{transition.name}_{conditionType.Name}";
-            EditorUtils.SaveAsset(condition, parentFsm, _conditionDir);
-            
+            condition.name = $"{transition.name}: {conditionType.Name}";
             transition.Conditions.Add(condition);
-            EditorUtility.SetDirty(transition);
+            AssetDatabase.AddObjectToAsset(condition, transition);
             AssetDatabase.SaveAssets();
 
             return condition;
         }
+
+        public static void DeleteCondition(Transition transition, TransitionCondition condition)
+        {
+            transition.Conditions.Remove(condition);
+            AssetDatabase.RemoveObjectFromAsset(condition);
+            AssetDatabase.SaveAssets();
+        }
         
-        public static FsmBehaviour CreateBehaviour(FsmStateMachine parentFsm, FsmState state, Type behaviourType)
+        public static FsmBehaviour CreateBehaviour(FsmState state, Type behaviourType)
         {
             FsmBehaviour behaviour = ScriptableObject.CreateInstance(behaviourType) as FsmBehaviour;
 
             if (!behaviour)
                 return null;
 
-            behaviour.name = $"{state.name}_{behaviourType.Name}";
-            EditorUtils.SaveAsset(behaviour, parentFsm, _behaviourDir);
-            
+            behaviour.name = $"{state.name}: {behaviourType.Name}";
             state.Behaviours.Add(behaviour);
-            EditorUtility.SetDirty(state);
+            
+            AssetDatabase.AddObjectToAsset(behaviour, state);
             AssetDatabase.SaveAssets();
 
             return behaviour;
         }
 
+        public static void DeleteBehaviour(FsmState state, FsmBehaviour behaviour)
+        {
+            state.Behaviours.Remove(behaviour);
+            AssetDatabase.RemoveObjectFromAsset(behaviour);
+            AssetDatabase.SaveAssets();
+        }
+
         public static FsmStateMachine CreateSubStateMachine(FsmState parentState)
         {
             FsmStateMachine fsm = ScriptableObject.CreateInstance<FsmStateMachine>();
-            fsm.name = $"{parentState.name}FSM";
+            fsm.name = $"{parentState.name}_SubFSM";
             EditorUtils.SaveAsset(fsm, parentState, fsm.name);
             
             parentState.SubStateMachine = fsm;
