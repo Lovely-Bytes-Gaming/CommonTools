@@ -36,6 +36,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
         }
         
+        public FsmState CurrentState { get; private set; }
+        
         [SerializeField] 
         private List<FsmState> _states = new();
         private IReadOnlyList<FsmState> _statesRO;
@@ -46,7 +48,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         [SerializeField] 
         private FsmState _exitState;
 
-        private FsmState _current;
         private IFsmRunner _runner;
 
         partial void InitializeStatesForEditor();
@@ -59,20 +60,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             InitializeStatesForEditor();
             ResetStates();
             
-            _current = _entryState;
-            _current.Enter();
+            CurrentState = _entryState;
+            CurrentState.Enter();
         }
 
         public void Exit()
         {
             ResetStates();
-            _current = null;
+            CurrentState = null;
             _runner = null;
         }
         
         public void OnUpdate(float deltaTime)
         {
-            if (_current && _current.OnUpdate(deltaTime, out Transition transition))
+            if (CurrentState && CurrentState.OnUpdate(deltaTime, out Transition transition))
                 SetState(transition.TargetState);
         }
 
@@ -93,17 +94,17 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void JumpTo(FsmState state)
         {
-            if (_states.Contains(state) && (_current != state || !_current.IsActive))
+            if (_states.Contains(state) && (CurrentState != state || !CurrentState.IsActive))
                 SetState(state);
         }
         
         private void SetState(FsmState state) 
         {
-            if(_current)
-                _current.Exit();
+            if(CurrentState)
+                CurrentState.Exit();
             
-            _current = state;
-            _current.Enter();
+            CurrentState = state;
+            CurrentState.Enter();
         }
         
         private void ResetStates()

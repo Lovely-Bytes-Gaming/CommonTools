@@ -74,6 +74,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 _onExit.RemoveListener(onExit);
         }
         
+        public void Release(FsmStateMachine stateMachine)
+        {
+            if (_subStateMachine == stateMachine)
+                _subStateMachine = null;
+        }
+        
         internal void Enter()
         {
             IsActive = true;
@@ -145,12 +151,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 return true;
             }
             return false;
-        }
-
-        public void Release(FsmStateMachine stateMachine)
-        {
-            if (_subStateMachine == stateMachine)
-                _subStateMachine = null;
         }
     }
 }
