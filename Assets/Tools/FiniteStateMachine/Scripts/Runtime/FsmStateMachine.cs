@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -15,13 +16,23 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public IReadOnlyList<FsmState> States => _statesRO ??= _states.AsReadOnly();
         public bool IsRunning => _runner != null;
         
-        public FsmState InitialState
+        public FsmState EntryState
         {
-            get => _initialState;
+            get => _entryState;
             set
             {
                 if (_states.Contains(value))
-                    _initialState = value;
+                    _entryState = value;
+            }
+        }
+
+        public FsmState ExitState
+        {
+            get => _exitState;
+            set
+            {
+                if (_states.Contains(value))
+                    _exitState = value;
             }
         }
         
@@ -29,8 +40,11 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private List<FsmState> _states = new();
         private IReadOnlyList<FsmState> _statesRO;
         
+        [FormerlySerializedAs("_initialState")] [SerializeField] 
+        private FsmState _entryState;
+
         [SerializeField] 
-        private FsmState _initialState;
+        private FsmState _exitState;
 
         private FsmState _current;
         private IFsmRunner _runner;
@@ -45,7 +59,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             InitializeStatesForEditor();
             ResetStates();
             
-            _current = _initialState;
+            _current = _entryState;
             _current.Enter();
         }
 
@@ -64,17 +78,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void AddState(FsmState state)
         {
-            if (!_initialState)
-                _initialState = state;
-            
             if (!_states.Contains(state))
                 _states.Add(state);
         }
 
         public void RemoveState(FsmState state)
         {
-            if (_initialState == state)
-                _initialState = null;
+            // cannot remove entry or exit state
+            if (state == _entryState || state == _exitState)
+                return;
 
             _states.Remove(state);
         }

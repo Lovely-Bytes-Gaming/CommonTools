@@ -38,10 +38,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     _subStateMachine.Enter(runner: this);
             }
         }
-        
+
         [FormerlySerializedAs("SubStateMachine")] [SerializeField, HideInInspector]
         private FsmStateMachine _subStateMachine;
-
+        
         [SerializeField]
         private UnityEvent _onEnter;
         

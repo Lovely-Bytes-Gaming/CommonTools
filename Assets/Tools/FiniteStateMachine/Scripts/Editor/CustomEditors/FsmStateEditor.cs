@@ -18,17 +18,17 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            
-            _name = EditorGUILayout.TextField("Name", _name);
-
-            if (GUILayout.Button("Apply Name"))
-            {
-                target.name = _name;
-                EditorUtility.SetDirty(target);
-            }
 
             if (target is not FsmState state) 
                 return;
+            
+            _name = EditorGUILayout.TextField("Name", _name);
+            
+            if (GUILayout.Button("Apply Name"))
+            {
+                Rename(state, _name);
+                EditorUtility.SetDirty(target);
+            }
             
             EditorGUILayout.Space(20f);
             SelectStateMachine(state);
@@ -67,7 +67,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void ShowEnterExitButton(FsmState state)
+        private static void ShowEnterExitButton(FsmState state)
         {
             if (!Application.isPlaying)
                 return;
@@ -81,6 +81,16 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     EditorUtils.ForceEnterState(state);
                     break;
             }
+        }
+
+        private static void Rename(Object state, string name)
+        {
+            state.name = name;
+
+            FsmStateMachine parentFsm =
+                AssetDatabase.LoadAssetAtPath<FsmStateMachine>(AssetDatabase.GetAssetPath(state));
+            
+            parentFsm.RecalculateNames();
         }
     }
 }

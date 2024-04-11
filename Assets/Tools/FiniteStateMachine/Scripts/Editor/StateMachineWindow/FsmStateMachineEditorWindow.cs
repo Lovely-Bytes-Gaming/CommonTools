@@ -67,6 +67,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         private void OnInspectorUpdate()
         {
+            if (!_stateMachineView.StateMachine)
+                return;
+            
             UQueryState<Edge> edges = _stateMachineView.edges;
             UQueryState<Node> nodes = _stateMachineView.nodes;
 

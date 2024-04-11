@@ -1,18 +1,43 @@
-
 using System;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
-    internal static class FsmFactory 
+    internal static class FsmFactory
     {
-        private const string _stateDir = "States";
-        private const string _transitionDir = "Transitions";
-        private const string _conditionDir = "Conditions";
-        private const string _behaviourDir = "Behaviour";
+        [MenuItem("Assets/Create/LovelyBytes/CommonTools/StateMachine")]
+        public static void CreateStateMachine() => CreateStateMachine("New State Machine");
+        
+        public static FsmStateMachine CreateStateMachine(string name)
+        {
+            string path = !Selection.activeObject 
+                ? "Assets" : AssetDatabase.GetAssetPath(Selection.activeObject);
+
+            if (!AssetDatabase.IsValidFolder(path))
+            {
+                int nameIndex = path.LastIndexOf('/');
+                path = path[..nameIndex];
+            }
+
+            FsmStateMachine stateMachine = ScriptableObject.CreateInstance<FsmStateMachine>();
+            stateMachine.name = name;
+            EditorUtils.CreateAsset(stateMachine, path);
+            
+            FsmState entry = CreateState(stateMachine, $"Entry");
+            FsmState exit = CreateState(stateMachine, $"Exit");
+
+            entry.Views[0].CanvasPosition = new Vector2(-100, 0);
+            exit.Views[0].CanvasPosition = new Vector2(100, 0);
+            
+            stateMachine.EntryState = entry;
+            stateMachine.ExitState = exit;
+            AssetDatabase.SaveAssets();
+            
+            FsmStateMachineEditorWindow.ShowWindow();
+            Selection.activeObject = stateMachine;
+            return stateMachine;
+        }
         
         public static FsmState CreateState(FsmStateMachine parentFsm, string name = null)
         {
@@ -31,6 +56,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 CanvasPosition = Vector2.zero
             });
             parentFsm.AddState(state);
+            
             AssetDatabase.AddObjectToAsset(state, parentFsm);
             AssetDatabase.SaveAssets();
 
@@ -59,14 +85,13 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             Transition transition = ScriptableObject.CreateInstance<Transition>();
 
-            transition.name = $"{from.State.name}: Transition";
             transition.TargetState = to.State;
             transition.GuidFrom = from.ViewData.Guid;
             transition.GuidTo = to.ViewData.Guid;
-            
             from.State.Transitions.Add(transition);
-            AssetDatabase.AddObjectToAsset(transition, from.State);
+            parentFsm.RecalculateNames();
             
+            AssetDatabase.AddObjectToAsset(transition, from.State);
             AssetDatabase.SaveAssets();
             
             return transition;
@@ -101,8 +126,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (!condition)
                 return null;
             
-            condition.name = $"{transition.name}: {conditionType.Name}";
             transition.Conditions.Add(condition);
+            parentFsm.RecalculateNames();
+            
             AssetDatabase.AddObjectToAsset(condition, transition);
             AssetDatabase.SaveAssets();
 
@@ -141,14 +167,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public static FsmStateMachine CreateSubStateMachine(FsmState parentState)
         {
-            FsmStateMachine fsm = ScriptableObject.CreateInstance<FsmStateMachine>();
-            fsm.name = $"{parentState.name}_SubFSM";
-            EditorUtils.SaveAsset(fsm, parentState, fsm.name);
-            
+            FsmStateMachine fsm = CreateStateMachine($"{parentState.name}FSM");
             parentState.SubStateMachine = fsm;
-            EditorUtility.SetDirty(parentState);
             AssetDatabase.SaveAssets();
-
             return fsm;
         }
     }

@@ -11,9 +11,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     public class FsmStateMachineView : GraphView 
     {
         public new class UxmlFactory : UxmlFactory<FsmStateMachineView, UxmlTraits> { }
+        public FsmStateMachine StateMachine { get; private set; }
 
-        private FsmStateMachine _stateMachine;
-        
         public FsmStateMachineView()
         {
             Insert(0, new GridBackground());
@@ -33,15 +32,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public void PopulateView(FsmStateMachine stateMachine)
         {
-            _stateMachine = stateMachine;
+            StateMachine = stateMachine;
 
             graphViewChanged -= OnGraphViewChanged;
             DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
 
-            CreateViews(_stateMachine.States);
+            CreateViews(StateMachine.States);
 
-            foreach (FsmState state in _stateMachine.States)
+            foreach (FsmState state in StateMachine.States)
                 CreateEdges(state);
         }
 
@@ -53,7 +52,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 {
                     case FsmStateView stateView:
                     {
-                        FsmFactory.DeleteViewData(_stateMachine, stateView.State, stateView.ViewData);
+                        FsmFactory.DeleteViewData(StateMachine, stateView.State, stateView.ViewData);
                         break;
                     }
                     case Edge edge when
@@ -68,7 +67,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             graphViewChange.edgesToCreate?.ForEach(edge =>
             {
                 if (edge.output.node is FsmStateView from && edge.input.node is FsmStateView to) 
-                    FsmFactory.CreateTransition(_stateMachine, from, to);
+                    FsmFactory.CreateTransition(StateMachine, from, to);
             });
             
             return graphViewChange;
@@ -80,7 +79,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             {
                 AppendSelectStateMachineAction(evt);
                 
-                if(_stateMachine)
+                if(StateMachine)
                     AppendCreateStateAction(evt);
             }
             
@@ -99,7 +98,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (instances.Length == 0)
                 return;
 
-            FsmStateMachine parentFsm = GetParentStateMachine(_stateMachine, instances);
+            FsmStateMachine parentFsm = GetParentStateMachine(StateMachine, instances);
 
             if (parentFsm)
             {
@@ -135,10 +134,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             evt.menu.AppendAction($"Add Condition/{type.Name}", _ =>
             {
-                if (!transition || !_stateMachine)
+                if (!transition || !StateMachine)
                     return;
                 
-                FsmFactory.CreateCondition(_stateMachine, transition, type);
+                FsmFactory.CreateCondition(StateMachine, transition, type);
             });
         }
         
@@ -161,7 +160,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void CreateState()
         {
-            FsmState state = FsmFactory.CreateState(_stateMachine);
+            FsmState state = FsmFactory.CreateState(StateMachine);
             CreateView(state, state.Views[0]);
         }
 
@@ -173,7 +172,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             EditorUtility.SetDirty(state);
             AssetDatabase.SaveAssets();
             
-            FsmStateView stateView = new(state, viewData, CreateView, _stateMachine);
+            FsmStateView stateView = new(state, viewData, CreateView, StateMachine);
             AddElement(stateView);
         }
 

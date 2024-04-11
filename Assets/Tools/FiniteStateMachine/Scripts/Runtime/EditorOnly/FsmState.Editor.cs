@@ -14,7 +14,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             public string Guid;
             public Vector2 CanvasPosition;
         }
-
+        
         [SerializeField, HideInInspector] 
         internal List<ViewData> Views = new();
     }

@@ -1,6 +1,6 @@
 using System.IO;
 using UnityEditor;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
@@ -14,18 +14,25 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             return rootDirectory;
         }
 
-        public static void SaveAsset(Object asset, Object parentAsset, string directory)
+        public static void CreateAsset(Object asset, Object parentAsset, string directory)
         {
             directory = $"{GetRootDirectory(parentAsset)}/{directory}";
-            SaveAsset(asset, directory);
+            CreateAsset(asset, directory);
         }
         
-        public static void SaveAsset(Object asset, string directory)
+        public static void CreateAsset(Object asset, string directory)
         {
             if (!Directory.Exists(directory))
                 Directory.CreateDirectory(directory);
+
+            string path = $"{directory}/{asset.name}";
+            string uniquePath = path;
             
-            AssetDatabase.CreateAsset(asset, $"{directory}/{asset.name}.asset");
+            int copyCount = 1;
+            while (AssetDatabase.LoadAssetAtPath<Object>($"{uniquePath}.asset"))
+                uniquePath = $"{path} {copyCount++}";
+            
+            AssetDatabase.CreateAsset(asset, $"{uniquePath}.asset");
         }
         
         public static TAsset[] FindAssetsOfType<TAsset>() where TAsset : Object

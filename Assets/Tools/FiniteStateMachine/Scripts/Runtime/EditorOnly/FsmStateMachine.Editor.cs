@@ -1,18 +1,33 @@
 #if UNITY_EDITOR
 
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     public partial class FsmStateMachine
     {
-        private const string _stateDir = "States";
-        private const string _transitionDir = "Transitions";
-        private const string _conditionDir = "Conditions";
-        private const string _behaviourDir = "Behaviour";
-        
         private readonly HashSet<FsmState> _workList = new();
 
+        internal void RecalculateNames()
+        {
+            foreach (FsmState state in _states)
+            {
+                foreach (FsmBehaviour behaviour in state.Behaviours)
+                    behaviour.name = GetChildName(state, behaviour);
+                
+                foreach (Transition transition in state.Transitions)
+                {
+                    transition.name = GetTransitionName(state, transition.TargetState);
+                    
+                    foreach (TransitionCondition condition in transition.Conditions)
+                        condition.name = GetChildName(transition, condition);
+                }
+            }
+            AssetDatabase.SaveAssets();
+        }
+        
         internal void DoInitializeStatesForEditor()
         {
             InitializeStatesForEditor();
@@ -20,7 +35,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         partial void InitializeStatesForEditor()
         {
-            AddDescendants(_initialState, 100);
+            AddDescendants(_entryState, 100);
             RemoveDuplicates();
         }
         
@@ -58,6 +73,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     AddDescendants(transition.TargetState, maxRecursions - 1);    
             }
         }
+        
+        private static string GetTransitionName(Object from, Object to)
+            => $"{from.name} -> {to.name}";
+
+        private static string GetChildName(Object parent, Object child)
+            => $"{parent.name}: {child.GetType().Name}";
     }
 }
 
