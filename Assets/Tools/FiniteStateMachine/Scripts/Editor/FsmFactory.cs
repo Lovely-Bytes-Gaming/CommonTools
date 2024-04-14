@@ -24,8 +24,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             stateMachine.name = name;
             EditorUtils.CreateAsset(stateMachine, path);
             
-            FsmState entry = CreateState(stateMachine, $"Entry");
-            FsmState exit = CreateState(stateMachine, $"Exit");
+            FsmState entry = CreateState(stateMachine, "Entry");
+            FsmState exit = CreateState(stateMachine, "Exit");
 
             entry.Views[0].CanvasPosition = new Vector2(-100, 0);
             exit.Views[0].CanvasPosition = new Vector2(100, 0);

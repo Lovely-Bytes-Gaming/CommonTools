@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [AddComponentMenu("LovelyBytes/CommonTools/FiniteStateMachine/FsmStateListener")]
     public class FsmStateListener : MonoBehaviour
     {
-        [SerializeField] 
-        private FsmState _gameState;
+        [FormerlySerializedAs("_gameState")] [SerializeField] 
+        private FsmState _state;
 
         public UnityEvent OnGameStateEnter;
         public UnityEvent OnGameStateExit;
@@ -25,14 +26,14 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (!_hasStarted)
                 return;
             
-            _gameState.AddListener(
+            _state.AddListener(
                 onEnter: InvokeOnEnter,
                 onExit: InvokeOnExit);
         }
 
         private void OnDisable()
         {
-            _gameState.RemoveListener(
+            _state.RemoveListener(
                 onEnter: InvokeOnEnter,
                 onExit: InvokeOnExit);
         }

@@ -26,8 +26,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             if (GUILayout.Button("Apply Name"))
             {
-                Rename(state, _name);
                 EditorUtility.SetDirty(target);
+                Rename(state, _name);
             }
             
             EditorGUILayout.Space(20f);
@@ -85,11 +85,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         private static void Rename(Object state, string name)
         {
-            state.name = name;
-
             FsmStateMachine parentFsm =
                 AssetDatabase.LoadAssetAtPath<FsmStateMachine>(AssetDatabase.GetAssetPath(state));
             
+            state.name = name;
             parentFsm.RecalculateNames();
         }
     }
