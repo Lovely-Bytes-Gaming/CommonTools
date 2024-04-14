@@ -11,8 +11,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             EditorGUI.BeginProperty(position, label, property);
             
-            //position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-
             float buttonWidth = Application.isPlaying ? 40f : 0f;
             const float padding = 2f;
 

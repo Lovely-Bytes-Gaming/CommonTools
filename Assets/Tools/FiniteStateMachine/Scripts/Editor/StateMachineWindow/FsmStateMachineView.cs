@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
@@ -244,9 +245,44 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     state.SubStateMachine == stateMachine));
         }
 
-        private FsmState GetParentState(FsmStateMachine parentFsm, Object childFsm)
+        private void MergeSelectionIntoStateMachine(List<FsmState> states)
         {
-            return parentFsm.States.FirstOrDefault(state => state.SubStateMachine == childFsm);
+            FsmStateMachine parentFsm = StateMachine;
+            FsmState parentState = FsmFactory.CreateState(parentFsm);
+            FsmStateMachine childFsm = FsmFactory.CreateSubStateMachine(parentState);
+
+            List<FsmState> incoming = GetAllIncomingStates(states);
+            
+            
+
+            // --- Handling incoming transitions ---
+            // 1. Find all states that can transition into our selected set of states.
+            // 2. For each incoming transition, create a new transition that links to the new parent state.
+            //  2.a If this results in a state having multiple transitions to the same state,
+            //      Merge them into a single transition that contains the disjunction of all their conditions
+            // 3. Create a transition from the new state machine's entry state to each of the states they targeted before.
+
+            // --- Handling outgoing transitions
+            // 1. Find all states within our set that have one or more transitions to outside states.
+            // 2. Link all those transitions to the new state machine's exit state.
+            //  2.a If this results in a state having multiple transitions to the same state,
+            //      Merge them into a single transition that contains the disjunction of all their conditions
+            // 3. Create a transition from the new parent state to each of the states they targeted before.
         }
-    }
+
+        private List<FsmState> GetAllIncomingStates(ICollection<FsmState> states)
+        {
+            return StateMachine.States
+                .Except(states)
+                .Where(state => state.Transitions.Any(trans => states.Contains(trans.TargetState)))
+                .ToList();
+        }
+
+        private List<FsmState> GetAllOutgoingStates(ICollection<FsmState> states)
+        {
+            return states
+                .Where(state => state.Transitions.Any(trans => !states.Contains(trans.TargetState)))
+                .ToList();
+        }
+    } 
 }
