@@ -3,7 +3,7 @@ using UnityEngine;
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/SubStateMachineFinished")]
-    public class SubStateMachineFinished : TransitionCondition
+    public class SubStateMachineFinished : FsmCondition
     {
         [SerializeField] private FsmState _state;
         

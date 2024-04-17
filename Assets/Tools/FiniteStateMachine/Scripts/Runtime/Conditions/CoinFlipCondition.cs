@@ -6,7 +6,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Condition that performs a coin flip every time it is queried, returning whether the flip was won.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/CoinFlipCondition")]
-    public class CoinFlipCondition : TransitionCondition
+    public class CoinFlipCondition : FsmCondition
     {
         [SerializeField, Range(0f, 1f)] 
         private float _chanceOfSuccess = 0.5f;

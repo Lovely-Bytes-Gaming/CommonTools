@@ -17,11 +17,11 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 foreach (FsmBehaviour behaviour in state.Behaviours)
                     behaviour.name = GetChildName(state, behaviour);
                 
-                foreach (Transition transition in state.Transitions)
+                foreach (FsmTransition transition in state.Transitions)
                 {
                     transition.name = GetTransitionName(state, transition.TargetState);
                     
-                    foreach (TransitionCondition condition in transition.Conditions)
+                    foreach (FsmCondition condition in transition.Conditions)
                         condition.name = GetChildName(transition, condition);
                 }
             }
@@ -67,7 +67,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _states.Add(state);
             _workList.Add(state);
             
-            foreach(Transition transition in state.Transitions) 
+            foreach(FsmTransition transition in state.Transitions) 
             {
                 if(transition.TargetState && !_workList.Contains(transition.TargetState))
                     AddDescendants(transition.TargetState, maxRecursions - 1);    

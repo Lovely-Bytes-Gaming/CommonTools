@@ -8,10 +8,10 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Returns true when all conditions are satisfied.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/ConditionSequence")]
-    public class ConditionSequence : TransitionCondition
+    public class ConditionSequence : FsmCondition
     {
         [SerializeField] 
-        private List<TransitionCondition> _conditions;
+        private List<FsmCondition> _conditions;
 
         private int _index;
         
@@ -30,7 +30,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             _index = 0;
             
-            foreach (TransitionCondition condition in _conditions)
+            foreach (FsmCondition condition in _conditions)
             {
                 if(condition)
                     condition.ResetCondition();

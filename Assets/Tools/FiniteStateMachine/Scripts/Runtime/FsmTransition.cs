@@ -4,20 +4,20 @@ using UnityEngine;
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/Transition")]
-    public partial class Transition : ScriptableObject
+    public partial class FsmTransition : ScriptableObject
     {
         [SerializeField] 
         public FsmState TargetState;
 
         [field: SerializeField] 
-        public List<TransitionCondition> Conditions { get; private set; } = new();
+        public List<FsmCondition> Conditions { get; private set; } = new();
 
         public bool QueryConditions(float deltaTime)
         {
             if (Conditions.Count < 1)
                 return true;
             
-            foreach (TransitionCondition condition in Conditions)
+            foreach (FsmCondition condition in Conditions)
             {
                 if (condition.QueryCondition(deltaTime))
                     return true;
@@ -30,7 +30,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             if (Conditions == null)
                 return;
             
-            foreach(TransitionCondition condition in Conditions)
+            foreach(FsmCondition condition in Conditions)
                 condition.ResetCondition();
         }
     }

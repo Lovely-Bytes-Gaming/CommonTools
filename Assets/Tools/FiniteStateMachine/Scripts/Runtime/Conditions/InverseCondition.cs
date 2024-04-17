@@ -6,9 +6,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Returns true when its nested condition is false.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/InverseCondition")]
-    public class InverseCondition : TransitionCondition
+    public class InverseCondition : FsmCondition
     {
-        public TransitionCondition Condition;        
+        public FsmCondition Condition;        
         
         public override bool QueryCondition(float deltaTime)
         {

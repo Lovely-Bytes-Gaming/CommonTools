@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
-    public partial class Transition
+    public partial class FsmTransition
     {
         [SerializeField, HideInInspector] 
         internal string GuidFrom, GuidTo;

@@ -34,8 +34,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             stateMachine.ExitState = exit;
             AssetDatabase.SaveAssets();
             
-            FsmStateMachineEditorWindow.ShowWindow();
-            Selection.activeObject = stateMachine;
             return stateMachine;
         }
         
@@ -75,69 +73,68 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             AssetDatabase.SaveAssets();
         }
         
-        public static Transition CreateTransition(FsmStateMachine parentFsm, FsmStateView from, FsmStateView to)
+        public static FsmTransition CreateTransition(FsmStateMachine parentFsm, 
+            FsmState from, FsmState to)
         {
-            foreach (Transition t in from.State.Transitions)
+            foreach (FsmTransition t in from.Transitions)
             {
-                if (t.TargetState == to.State)
+                if (t.TargetState == to)
                     return null;
             }
             
-            Transition transition = ScriptableObject.CreateInstance<Transition>();
+            FsmTransition fsmTransition = ScriptableObject.CreateInstance<FsmTransition>();
 
-            transition.TargetState = to.State;
-            transition.GuidFrom = from.ViewData.Guid;
-            transition.GuidTo = to.ViewData.Guid;
-            from.State.Transitions.Add(transition);
+            fsmTransition.TargetState = to;
+            from.Transitions.Add(fsmTransition);
             parentFsm.RecalculateNames();
             
-            AssetDatabase.AddObjectToAsset(transition, from.State);
+            AssetDatabase.AddObjectToAsset(fsmTransition, from);
             AssetDatabase.SaveAssets();
             
-            return transition;
+            return fsmTransition;
         }
         
         public static void DeleteTransition(FsmState from, FsmState to)
         {
-            Transition transition = default;
+            FsmTransition fsmTransition = default;
             
-            foreach (Transition t in from.Transitions)
+            foreach (FsmTransition t in from.Transitions)
             {
                 if (!t || t.TargetState != to)
                     continue;
 
-                transition = t;
+                fsmTransition = t;
                 break;
             }
 
-            if (!transition)
+            if (!fsmTransition)
                 return;
             
-            from.Transitions.Remove(transition);
-            AssetDatabase.RemoveObjectFromAsset(transition);
+            from.Transitions.Remove(fsmTransition);
+            AssetDatabase.RemoveObjectFromAsset(fsmTransition);
             AssetDatabase.SaveAssets();
         }
         
-        public static TransitionCondition CreateCondition(FsmStateMachine parentFsm, Transition transition, Type conditionType)
+        public static FsmCondition CreateCondition(FsmStateMachine parentFsm, FsmTransition fsmTransition, Type conditionType)
         {
-            TransitionCondition condition = ScriptableObject.CreateInstance(conditionType) 
-                as TransitionCondition;
+            FsmCondition condition = ScriptableObject.CreateInstance(conditionType) 
+                as FsmCondition;
             
             if (!condition)
                 return null;
             
-            transition.Conditions.Add(condition);
+            fsmTransition.Conditions.Add(condition);
             parentFsm.RecalculateNames();
             
-            AssetDatabase.AddObjectToAsset(condition, transition);
+            AssetDatabase.AddObjectToAsset(condition, fsmTransition);
             AssetDatabase.SaveAssets();
 
             return condition;
         }
 
-        public static void DeleteCondition(Transition transition, TransitionCondition condition)
+        public static void DeleteCondition(FsmTransition fsmTransition, FsmCondition condition)
         {
-            transition.Conditions.Remove(condition);
+            fsmTransition.Conditions.Remove(condition);
             AssetDatabase.RemoveObjectFromAsset(condition);
             AssetDatabase.SaveAssets();
         }

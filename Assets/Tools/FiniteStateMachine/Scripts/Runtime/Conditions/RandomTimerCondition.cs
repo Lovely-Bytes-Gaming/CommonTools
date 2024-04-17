@@ -6,7 +6,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Waits for a random time between MinTime and MaxTime before evaluating to true. 
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/RandomTimerCondition")]
-    public class RandomTimerCondition : TransitionCondition
+    public class RandomTimerCondition : FsmCondition
     {
         public float MinTime = 1f;
         public float MaxTime = 2f;

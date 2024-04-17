@@ -13,7 +13,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/FsmStateMachine")]
     public partial class FsmStateMachine : ScriptableObject
     {
-        public IReadOnlyList<FsmState> States => _statesRO ??= _states.AsReadOnly();
+        public IReadOnlyList<FsmState> States => _states.AsReadOnly();
         public bool IsRunning => _runner != null;
         
         public FsmState EntryState
@@ -40,7 +40,6 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         [SerializeField] 
         private List<FsmState> _states = new();
-        private IReadOnlyList<FsmState> _statesRO;
         
         [FormerlySerializedAs("_initialState")] [SerializeField] 
         private FsmState _entryState;
@@ -73,7 +72,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         public void OnUpdate(float deltaTime)
         {
-            if (CurrentState && CurrentState.OnUpdate(deltaTime, out Transition transition))
+            if (CurrentState && CurrentState.OnUpdate(deltaTime, out FsmTransition transition))
                 SetState(transition.TargetState);
         }
 

@@ -8,15 +8,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Returns true when all conditions are satisfied.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/CompoundCondition")]
-    public class CompoundCondition : TransitionCondition
+    public class CompoundCondition : FsmCondition
     {
-        [SerializeField] private List<TransitionCondition> _conditions = new();
+        [SerializeField] private List<FsmCondition> _conditions = new();
 
         public override bool QueryCondition(float deltaTime)
         {
             bool result = true;
 
-            foreach (TransitionCondition condition in _conditions)
+            foreach (FsmCondition condition in _conditions)
             {
                 if(condition)
                     result &= condition.QueryCondition(deltaTime);
@@ -28,7 +28,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             base.ResetCondition();
 
-            foreach (TransitionCondition condition in _conditions)
+            foreach (FsmCondition condition in _conditions)
             {
                 if(condition)
                     condition.ResetCondition();

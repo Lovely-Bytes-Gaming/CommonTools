@@ -6,7 +6,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Waits for set time before evaluating to true.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/TimerCondition")]
-    public class TimerCondition : TransitionCondition
+    public class TimerCondition : FsmCondition
     {
         public float Duration = 1f;
         private float _time;

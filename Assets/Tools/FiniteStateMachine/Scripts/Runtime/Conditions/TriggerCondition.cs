@@ -7,7 +7,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// Returns whether the trigger has already been fired.
     /// </summary>
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/TriggerCondition")]
-    public class TriggerCondition : TransitionCondition
+    public class TriggerCondition : FsmCondition
     {
         private bool _canFire;
 

@@ -4,9 +4,9 @@ using UnityEngine;
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     /// <summary>
-    /// Can be attached to a <see cref="Transition"/> to control under which condition it can be fired.
+    /// Can be attached to a <see cref="FsmTransition"/> to control under which condition it can be fired.
     /// </summary>
-    public abstract class TransitionCondition : ScriptableObject
+    public abstract class FsmCondition : ScriptableObject
     {
         /// <summary>
         /// Called each frame when the <see cref="FsmStateMachine"/> this condition belongs to is updated.

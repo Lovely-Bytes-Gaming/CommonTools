@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LovelyBytes.CommonTools.FiniteStateMachine
 {
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/BoolCondition")]
-    public class BoolCondition : TransitionCondition
+    public class BoolCondition : FsmCondition
     {
         [SerializeField] 
         private BoolVariable _boolVariable;

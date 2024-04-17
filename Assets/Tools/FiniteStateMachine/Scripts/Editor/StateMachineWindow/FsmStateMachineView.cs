@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
-using Object = UnityEngine.Object;
 
 namespace LovelyBytes.CommonTools.FiniteStateMachine 
 {
@@ -67,8 +65,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
             graphViewChange.edgesToCreate?.ForEach(edge =>
             {
-                if (edge.output.node is FsmStateView from && edge.input.node is FsmStateView to) 
-                    FsmFactory.CreateTransition(StateMachine, from, to);
+                if (edge.output.node is FsmStateView from && edge.input.node is FsmStateView to)
+                {
+                    FsmTransition transition = FsmFactory.CreateTransition(StateMachine, from.State, to.State);
+                    transition.GuidFrom = from.ViewData.Guid;
+                    transition.GuidTo = to.ViewData.Guid;
+                }
             });
             
             return graphViewChange;
@@ -76,7 +78,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            if (!FsmStateMachineEditorWindow.CurrentSelection)
+            if (!FsmStateMachineEditorWindow.ActiveObject)
             {
                 AppendSelectStateMachineAction(evt);
                 
@@ -84,11 +86,16 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     AppendCreateStateAction(evt);
             }
             
-            switch (FsmStateMachineEditorWindow.CurrentSelection)
+            switch (FsmStateMachineEditorWindow.ActiveObject)
             {
-                case Transition transition:
+                case FsmTransition transition:
                     AppendEdgeActions(evt, transition);
                     break;
+            }
+
+            if (FsmStateMachineEditorWindow.SelectedStates.Count > 0)
+            {
+                AppendMergeIntoStateMachineAction(evt, FsmStateMachineEditorWindow.SelectedStates);
             }
         }
 
@@ -120,25 +127,33 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 _ => CreateState());
         }
 
-        private void AppendEdgeActions(ContextualMenuPopulateEvent evt, Transition transition)
+        private void AppendEdgeActions(ContextualMenuPopulateEvent evt, FsmTransition fsmTransition)
         {
-            TypeCache.TypeCollection types = TypeCache.GetTypesDerivedFrom<TransitionCondition>();
+            TypeCache.TypeCollection types = TypeCache.GetTypesDerivedFrom<FsmCondition>();
             
             foreach(Type type in types)
-                AppendCreateConditionAction(evt, transition, type);
+                AppendCreateConditionAction(evt, fsmTransition, type);
         }
 
-        private void AppendCreateConditionAction(ContextualMenuPopulateEvent evt, Transition transition, Type type)
+        private void AppendCreateConditionAction(ContextualMenuPopulateEvent evt, FsmTransition fsmTransition, Type type)
         {
             if (type.IsGenericType)
                 return;
             
             evt.menu.AppendAction($"Add Condition/{type.Name}", _ =>
             {
-                if (!transition || !StateMachine)
+                if (!fsmTransition || !StateMachine)
                     return;
                 
-                FsmFactory.CreateCondition(StateMachine, transition, type);
+                FsmFactory.CreateCondition(StateMachine, fsmTransition, type);
+            });
+        }
+
+        private void AppendMergeIntoStateMachineAction(ContextualMenuPopulateEvent evt, List<FsmState> states)
+        {
+            evt.menu.AppendAction("Selected States/Merge into State Machine", _ =>
+            {
+                MergeSelectionIntoStateMachine(states);
             });
         }
         
@@ -198,38 +213,38 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             for (int i = state.Transitions.Count - 1; i > -1; --i)
             {
-                Transition transition = state.Transitions[i];
+                FsmTransition fsmTransition = state.Transitions[i];
                 
-                if (!transition)
+                if (!fsmTransition)
                     continue;
 
-                if (string.IsNullOrEmpty(transition.GuidFrom))
+                if (string.IsNullOrEmpty(fsmTransition.GuidFrom))
                 {
-                    transition.GuidFrom = state.Views[0].Guid;
-                    EditorUtility.SetDirty(transition);
+                    fsmTransition.GuidFrom = state.Views[0].Guid;
+                    EditorUtility.SetDirty(fsmTransition);
                 }
 
-                if (string.IsNullOrEmpty(transition.GuidTo))
+                if (string.IsNullOrEmpty(fsmTransition.GuidTo))
                 {
-                    transition.GuidTo = transition.TargetState.Views[0].Guid;
-                    EditorUtility.SetDirty(transition);
+                    fsmTransition.GuidTo = fsmTransition.TargetState.Views[0].Guid;
+                    EditorUtility.SetDirty(fsmTransition);
                 }
                 
-                FsmStateView from = FindView(transition.GuidFrom);
+                FsmStateView from = FindView(fsmTransition.GuidFrom);
 
-                if (transition.TargetState == from.State)
+                if (fsmTransition.TargetState == from.State)
                 {
                     state.Transitions.RemoveAt(i);
                     EditorUtility.SetDirty(state);
                 }
                 else
                 {
-                    FsmStateView to = FindView(transition.GuidTo);
+                    FsmStateView to = FindView(fsmTransition.GuidTo);
                     Edge edge = from.Output.ConnectTo(to.Input);
                     AddElement(edge);
                 }
                 
-                if(EditorUtility.IsDirty(transition) || EditorUtility.IsDirty(state))
+                if(EditorUtility.IsDirty(fsmTransition) || EditorUtility.IsDirty(state))
                     AssetDatabase.SaveAssets();
             }
         }
@@ -244,17 +259,54 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 fsm.States.Any(state =>
                     state.SubStateMachine == stateMachine));
         }
-
+        
         private void MergeSelectionIntoStateMachine(List<FsmState> states)
         {
             FsmStateMachine parentFsm = StateMachine;
             FsmState parentState = FsmFactory.CreateState(parentFsm);
             FsmStateMachine childFsm = FsmFactory.CreateSubStateMachine(parentState);
-
+            
+            foreach (FsmState state in states)
+            {
+                AssetDatabase.RemoveObjectFromAsset(state);
+                AssetDatabase.AddObjectToAsset(state, childFsm);
+                
+                parentFsm.RemoveState(state);
+                childFsm.AddState(state);
+            }
+            
             List<FsmState> incoming = GetAllIncomingStates(states);
             
-            
+            foreach (FsmState state in incoming)
+            {
+                FsmTransition toParent =
+                    FsmFactory.CreateTransition(StateMachine, state, parentState);                
+                
+                for (int i = state.Transitions.Count-1; i > -1; i--)
+                {
+                    FsmTransition transition = state.Transitions[i];
+                    
+                    if (!states.Contains(transition.TargetState))
+                        continue;
 
+                    foreach (FsmCondition condition in transition.Conditions)
+                    {
+                        if (!toParent.Conditions.Contains(condition))
+                            toParent.Conditions.Add(condition);
+                    }
+
+                    FsmTransition toState = FsmFactory.CreateTransition(childFsm, childFsm.EntryState, transition.TargetState);
+                    
+                    foreach(FsmCondition condition in transition.Conditions)
+                        toState.Conditions.Add(condition);
+                    
+                    FsmFactory.DeleteTransition(state, transition.TargetState);
+                }
+            }
+            
+            StateMachine.RecalculateNames();
+            AssetDatabase.SaveAssets();
+            
             // --- Handling incoming transitions ---
             // 1. Find all states that can transition into our selected set of states.
             // 2. For each incoming transition, create a new transition that links to the new parent state.

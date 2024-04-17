@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -11,7 +12,8 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private FsmStateMachineView _stateMachineView;
         private InspectorView _inspectorView;
 
-        public static Object CurrentSelection { get; private set; }
+        public static Object ActiveObject { get; private set; }
+        public static List<FsmState> SelectedStates { get; private set; } = new();
         
         [MenuItem("Window/LovelyBytes/State Machine Editor")]
         public static void ShowWindow()
@@ -79,11 +81,11 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     UpdateStateView(view);
             }
             
-            Object lastSelected = CurrentSelection;
+            Object lastSelected = ActiveObject;
             UpdateSelection(nodes, edges);
             
-            if(!lastSelected || lastSelected != CurrentSelection)
-                _inspectorView.UpdateSelection(CurrentSelection);
+            if(!lastSelected || lastSelected != ActiveObject)
+                _inspectorView.UpdateSelection(ActiveObject);
         }
 
         private static void UpdateStateView(FsmStateView view)
@@ -104,14 +106,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void UpdateSelection(in UQueryState<Node> nodes, in UQueryState<Edge> edges)
         {
+            SelectedStates.Clear();
+            ActiveObject = null;
+            
             foreach (Node node in nodes)
             {
                 if (node is not FsmStateView view || !view.IsSelected(_stateMachineView))
                     continue;
                 
-                CurrentSelection = view.State;
-                return;
+                ActiveObject = view.State;
+                SelectedStates.Add(view.State);
             }
+
+            if (ActiveObject)
+                return;
             
             foreach (Edge edge in edges.Where(edge => edge.IsSelected(_stateMachineView)))
             {
@@ -119,15 +127,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                     edge.input.node is not FsmStateView to) 
                     continue;
 
-                foreach (Transition transition in from.State.Transitions.Where(transition => 
+                foreach (FsmTransition transition in from.State.Transitions.Where(transition => 
                              transition && transition.TargetState == to.State))
                 {
-                    CurrentSelection = transition;
+                    ActiveObject = transition;
                     return;
                 }
             }
 
-            CurrentSelection = null;
+            ActiveObject = null;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         public bool IsActive { get; private set; }
         
         [field: SerializeField] 
-        public List<Transition> Transitions { get; private set; } = new();
+        public List<FsmTransition> Transitions { get; private set; } = new();
 
         [field: SerializeField] 
         public List<FsmBehaviour> Behaviours { get; private set; } = new();
@@ -104,19 +104,19 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _onExit?.Invoke();
         }
 
-        internal bool OnUpdate(float deltaTime, out Transition firedTransition)
+        internal bool OnUpdate(float deltaTime, out FsmTransition firedFsmTransition)
         {
             UpdateBehaviours(deltaTime);
             
             if (_subStateMachine)
                 _subStateMachine.OnUpdate(deltaTime);
             
-            return TryGetValidTransition(deltaTime, out firedTransition);
+            return TryGetValidTransition(deltaTime, out firedFsmTransition);
         }
 
         private void ResetTransitions()
         {
-            foreach(Transition transition in Transitions)
+            foreach(FsmTransition transition in Transitions)
                 transition.ResetConditions();
         }
 
@@ -138,16 +138,16 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 behaviour.OnUpdate(deltaTime);
         }
         
-        private bool TryGetValidTransition(float deltaTime, out Transition transition)
+        private bool TryGetValidTransition(float deltaTime, out FsmTransition fsmTransition)
         {
-            transition = null;
+            fsmTransition = null;
             
-            foreach (Transition t in Transitions)
+            foreach (FsmTransition t in Transitions)
             {
                 if (!t.QueryConditions(deltaTime))
                     continue;
 
-                transition = t;
+                fsmTransition = t;
                 return true;
             }
             return false;

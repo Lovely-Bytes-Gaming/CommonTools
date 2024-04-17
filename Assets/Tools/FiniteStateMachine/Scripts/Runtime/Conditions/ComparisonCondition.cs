@@ -9,7 +9,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     /// <summary>
     /// Compares the value of the given object with its Reference Value.
     /// </summary>
-    public class ComparisonCondition<TValue> : TransitionCondition
+    public class ComparisonCondition<TValue> : FsmCondition
         where TValue : IComparable<TValue>
     {
         [SerializeField]
