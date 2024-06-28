@@ -14,17 +14,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private float _currentDuration;
         private float _time;
 
-
-        public override bool QueryCondition(float deltaTime)
+        public override void UpdateCondition(float deltaTime)
         {
             _time += deltaTime;
-            return _time > _currentDuration;
         }
 
         public override void ResetCondition()
         {
             _time = 0f;
             _currentDuration = Random.Range(MinTime, MaxTime);
+        }
+
+        protected override bool GetIsSatisfied()
+        {
+            return _time > _currentDuration;
         }
     }
 }

@@ -15,16 +15,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         {
             ResetTimer();
         }
-        
-        public override bool QueryCondition(float deltaTime)
+
+        public override void UpdateCondition(float deltaTime)
         {
             _time += deltaTime;
-            return _time > Duration;
         }
-
+        
         public void ResetTimer()
         {
             _time = 0f;
+        }
+        
+        protected override bool GetIsSatisfied()
+        {
+            return _time > Duration;
         }
     }
 }

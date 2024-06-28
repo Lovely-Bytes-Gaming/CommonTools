@@ -16,7 +16,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             _canFire = true;
         }
 
-        public override bool QueryCondition(float deltaTime)
+        protected override bool GetIsSatisfied()
         {
             return _canFire;
         }

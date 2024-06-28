@@ -12,18 +12,15 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     {
         [SerializeField] private List<FsmCondition> _conditions = new();
 
-        public override bool QueryCondition(float deltaTime)
+        public override void UpdateCondition(float deltaTime)
         {
-            bool result = true;
-
             foreach (FsmCondition condition in _conditions)
             {
-                if(condition)
-                    result &= condition.QueryCondition(deltaTime);
+                if (condition)
+                    condition.UpdateCondition(deltaTime);
             }
-            return result;
         }
-
+        
         public override void ResetCondition()
         {
             base.ResetCondition();
@@ -33,6 +30,18 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
                 if(condition)
                     condition.ResetCondition();
             }
+        }
+        
+        protected override bool GetIsSatisfied()
+        {
+            bool result = true;
+
+            foreach (FsmCondition condition in _conditions)
+            {
+                if(condition)
+                    result &= condition.IsSatisfied;
+            }
+            return result;
         }
     }
 }

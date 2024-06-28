@@ -14,16 +14,20 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         private List<FsmCondition> _conditions;
 
         private int _index;
-        
-        public override bool QueryCondition(float deltaTime)
-        {
-            for (; _index < _conditions.Count; ++_index)
-            {
-                if (!_conditions[_index].QueryCondition(deltaTime))
-                    return false;
-            }
 
-            return true;
+        public override void UpdateCondition(float deltaTime)
+        {
+            _conditions[_index].UpdateCondition(deltaTime);
+        }
+        
+        protected override bool GetIsSatisfied()
+        {
+            while (_index < _conditions.Count &&
+                _conditions[_index].IsSatisfied)
+            {
+                ++_index;
+            }
+            return _index >= _conditions.Count;
         }
 
         public override void ResetCondition()

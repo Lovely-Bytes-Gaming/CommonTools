@@ -7,7 +7,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     {
         [SerializeField] private FsmState _state;
         
-        public override bool QueryCondition(float deltaTime)
+        protected override bool GetIsSatisfied()
         {
             FsmStateMachine subFsm = _state.SubStateMachine;
             

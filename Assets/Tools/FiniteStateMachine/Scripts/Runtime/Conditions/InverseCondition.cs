@@ -8,11 +8,16 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/InverseCondition")]
     public class InverseCondition : FsmCondition
     {
-        public FsmCondition Condition;        
-        
-        public override bool QueryCondition(float deltaTime)
+        public FsmCondition Condition;
+
+        public override void UpdateCondition(float deltaTime)
         {
-            return !Condition.QueryCondition(deltaTime);
+            Condition.UpdateCondition(deltaTime);
+        }
+        
+        protected override bool GetIsSatisfied()
+        {
+            return !Condition.IsSatisfied;
         }
 
         public override void ResetCondition()

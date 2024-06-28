@@ -21,7 +21,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             set => _chanceOfSuccess = Mathf.Clamp01(value);
         }
         
-        public override bool QueryCondition(float deltaTime)
+        protected override bool GetIsSatisfied()
         {
             return Random.value < _chanceOfSuccess;
         }

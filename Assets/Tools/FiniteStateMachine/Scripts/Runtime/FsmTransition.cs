@@ -19,7 +19,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             
             foreach (FsmCondition condition in Conditions)
             {
-                if (condition.QueryCondition(deltaTime))
+                condition.UpdateCondition(deltaTime);
+                
+                if (condition.IsSatisfied)
                     return true;
             }
             return false;

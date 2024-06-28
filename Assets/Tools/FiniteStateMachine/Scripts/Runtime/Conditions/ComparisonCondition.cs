@@ -13,7 +13,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         where TValue : IComparable<TValue>
     {
         [SerializeField]
-        private SerializableInterface<IReadOnlyView<TValue>> _value;
+        private Variable<TValue> _value;
 
         [FormerlySerializedAs("_referenceValue")] 
         public TValue ReferenceValue;
@@ -21,9 +21,9 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         [SerializeField] 
         private ComparisonType _comparisonType;
         
-        public override bool QueryCondition(float deltaTime)
+        protected override bool GetIsSatisfied()
         {
-            return Compare(_value.Value.Value);
+            return Compare(_value.Value);
         }
 
         private bool Compare(TValue value)

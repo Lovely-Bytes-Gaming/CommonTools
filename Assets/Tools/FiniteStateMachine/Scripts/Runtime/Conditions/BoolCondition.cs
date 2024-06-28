@@ -6,12 +6,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
     [CreateAssetMenu(menuName = "LovelyBytes/CommonTools/FiniteStateMachine/BoolCondition")]
     public class BoolCondition : FsmCondition
     {
-        [SerializeField] 
-        private BoolVariable _boolVariable;
-
         public bool ReferenceValue = true;   
         
-        public override bool QueryCondition(float deltaTime)
+        [SerializeField] 
+        private BoolVariable _boolVariable;
+        
+        protected override bool GetIsSatisfied()
         {
             return _boolVariable.Value == ReferenceValue;
         }
