@@ -55,9 +55,12 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         private void ShowSubFsmMenu(FsmState state)
         {
-            state.SubStateMachine = EditorGUILayout.ObjectField("Sub State Machine", 
+            FsmStateMachine subFsm = EditorGUILayout.ObjectField("Sub State Machine", 
                 state.SubStateMachine, typeof(FsmStateMachine), false) as FsmStateMachine;
 
+            if (state.SubStateMachine != subFsm)
+                state.SubStateMachine = subFsm;
+            
             if (!state.SubStateMachine && GUILayout.Button("Create Sub State Machine"))
                 FsmFactory.CreateSubStateMachine(state);
 
