@@ -20,7 +20,7 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
         
         partial void InitializeStatesForEditor()
         {
-            AddDescendants(_initialState, 100);
+            AddDescendants(_initialState);
             RemoveDuplicates();
         }
         
@@ -42,13 +42,17 @@ namespace LovelyBytes.CommonTools.FiniteStateMachine
             }
         }
 
+        private void AddDescendants(FsmState state)
+        {
+            _workList.Clear();
+            AddDescendants(state, 100);
+        }        
+        
         private void AddDescendants(FsmState state, int maxRecursions)
         {
             if (!state || maxRecursions < 1)
                 return;
          
-            _workList.Clear();
-            
             _states.Add(state);
             _workList.Add(state);
             
