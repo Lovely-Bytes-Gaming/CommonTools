@@ -1,7 +1,7 @@
 {
   "name": "com.lovelybytes.common-tools",
   "author": "Lovely Bytes Gaming",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "displayName": "Common Tools",
   "description": "Collection of Unity Development tools shared across projects",
   "unity": "2022.3",
